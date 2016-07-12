@@ -1,0 +1,17 @@
+{
+	"author": "Mike Wilcox @clubajax",
+	"name": "popup",
+	"main":"src/popup.js",
+	"description": "A utility for opening elements as a popup",
+	"version": "0.5.0",
+	"license": "MIT",
+    "readmeFilename": "README.md",
+	"repository": {
+        "type": "git",
+        "url": "git://github.com/clubajax/popup.git"
+    },
+	"dependencies": {
+		"dom": "clubajax/dom#v1.1.0",
+		"on": "clubajax/on"
+	}
+}

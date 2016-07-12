@@ -1,0 +1,14 @@
+{
+    "name": "popup",
+    "version": "0.5.0",
+    "authors": [
+        "Mike Wilcox <anm9tr@gmail.com>"
+    ],
+    "description": "A utility for opening elements as a popup",
+    "license": "MIT",
+    "ignore": [
+        "node_modules",
+        "bower_components"
+    ],
+    "main": "src/popup.js"
+}

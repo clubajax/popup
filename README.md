@@ -1,5 +1,5 @@
 # popup
-A utility for opening elemnts as a popup
+A utility for opening elements as a popup
 
 ## License
 
