@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+    <title>Test popup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.css">
+    <script src="https://rawgit.com/clubajax/dom/master/src/dom.js"></script>
+    <script src="https://rawgit.com/clubajax/on/master/src/key-poly.js"></script>
+    <script src="https://rawgit.com/clubajax/on/master/src/on.js"></script>
+    <script src="../src/popup.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
+</head>
+<body>
+    <h1>popup test</h1>
+    <div id="mocha"></div>
+    <script>
+
+        mocha.setup('tdd');
+
+        suite('popNode', function() {
+
+            var suite = window.suite,
+                dom = window.dom,
+                on = window.on,
+                expect = chai.expect;
+
+            function xsuite () {}
+            function xtest () {}
+            function exists (id) {
+                var n = dom.byId(id);
+                return !!n && !!dom.isNode(n) && !!n.parentNode;
+            }
+
+            suite('lib.popNode.destroy', function () {
+                test('it should destroy properly', function () {
+                    var
+                        popNode,
+                        handle = popup({
+                            create: function () {
+                                return dom('div', {className: 'red-box', id: 'a'});
+                            }
+                        });
+
+                    popNode = dom.byId('a');
+
+                    expect(dom.isNode(popNode)).to.equal(true);
+
+                    handle.destroy();
+
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(false);
+                });
+
+            });
+
+            suite('lib.popNode.show/hide', function () {
+
+
+                test('it should show and hide and destroy', function () {
+                    var
+                        popNode,
+                        handle = popup({
+                            destroyOnClose: true,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(true);
+
+                    handle.close();
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(false);
+
+                    handle.open();
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(true);
+
+                    handle.close();
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(false);
+
+                    handle.destroy();
+                });
+
+                test('it should emit `open` and `close` events', function () {
+                    var
+                        opened = false,
+                        closed = false,
+                        handle = popup({
+                            openOn: 'self',
+                            destroyOnClose: true,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+                    handle.on('open', function () {
+                        opened = true;
+                    });
+                    handle.open();
+
+                    handle.on('close', function () {
+                        closed = true;
+                    });
+                    handle.close();
+                    expect(opened).to.equal(true);
+
+                    handle.close();
+                    expect(closed).to.equal(true);
+
+                    handle.destroy();
+                });
+
+                test('it should show and hide without destroy', function () {
+                    var
+                        handle = popup({
+                            destroyOnClose: false,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+
+                    expect(handle.popup.style.display).to.equal('');
+
+                    handle.close();
+                    expect(handle.popup.style.display).to.equal('none');
+
+                    handle.open();
+                    expect(handle.popup.style.display).to.equal('');
+
+                    handle.close();
+                    expect(handle.popup.style.display).to.equal('none');
+
+                    handle.destroy();
+
+                    handle.open();
+                });
+
+                test('it should not open after destroyed', function () {
+                    var
+                        handle = popup({
+                            destroyOnClose: false,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+
+
+                    handle.close();
+                    expect(handle.popup.style.display).to.equal('none');
+
+                    handle.destroy();
+
+                    handle.open();
+                    expect(handle.popup).to.equal(null);
+                });
+            });
+
+            suite('lib.popNode.clickoff', function () {
+
+                test('it should open and close by button click', function (done) {
+                    var
+                        popNode,
+                        time = 100,
+                        button = dom('button', {html: 'open'}, document.body),
+                        handle = popup({
+                            input: button,
+                            openOn: 'click',
+                            closeOn: 'clickoff',
+                            destroyOnClose: true,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+
+                    on.emit(button, 'click');
+                    expect(exists('a')).to.equal(true);
+
+                    setTimeout(function () {
+                        on.emit(document.body, 'click');
+                        setTimeout(function () {
+                            popNode = dom.byId('a');
+                            expect(dom.isNode(popNode)).to.equal(false);
+                            done();
+                        },time);
+                    },time);
+                });
+
+                test('it should open and close and reopen by button click', function (done) {
+                    var
+                        popNode,
+                        time = 100,
+                        button = dom('button', {html: 'open'}, document.body),
+                        handle = popup({
+                            input: button,
+                            openOn: 'click',
+                            closeOn: 'clickoff',
+                            destroyOnClose: true,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+
+                    on.emit(button, 'click');
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(true);
+
+                    setTimeout(function () {
+                        on.emit(document.body, 'click');
+                        setTimeout(function () {
+                            popNode = dom.byId('a');
+                            expect(dom.isNode(popNode)).to.equal(false);
+                            setTimeout(function () {
+                                on.emit(document.body, 'click');
+                                setTimeout(function () {
+                                    popNode = dom.byId('a');
+                                    expect(dom.isNode(popNode)).to.equal(false);
+                                    done();
+                                },time);
+                            },time);
+                        },time);
+                    },time );
+                });
+
+                test('it should close with a timeout', function (done) {
+                    var
+                        popNode,
+                        button = dom('button', {html: 'open'}, document.body),
+                        handle = popup({
+                            input: button,
+                            openOn: 'click',
+                            closeOn: 'clickoff',
+                            destroyOnClose: true,
+                            closeDelay: 500,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id:'a'});
+                            }
+                        });
+
+                    on.emit(button, 'click');
+                    popNode = dom.byId('a');
+                    expect(dom.isNode(popNode)).to.equal(true);
+
+                    setTimeout(function () {
+
+                        on.emit(button, 'click'); // ???
+                        on.emit(document.body, 'click');
+                        setTimeout(function () {
+                            popNode = dom.byId('a');
+                            expect(dom.isNode(popNode)).to.equal(true);
+                            setTimeout(function () {
+                                popNode = dom.byId('a');
+                                expect(dom.isNode(popNode)).to.equal(false);
+                                done();
+                            },300);
+                        },300);
+                    },100);
+
+                });
+            });
+
+        });
+
+        mocha.run();
+    </script>
+</body>
+</html>
