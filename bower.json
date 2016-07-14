@@ -10,5 +10,10 @@
         "node_modules",
         "bower_components"
     ],
-    "main": "src/popup.js"
+    "main": "src/popup.js",
+    "dependencies": {
+        "dom": "clubajax/dom#v1.1.0",
+        "on": "clubajax/on",
+        "fx":"clubajax/fx"
+    }
 }

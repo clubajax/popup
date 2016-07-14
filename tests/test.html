@@ -3,12 +3,22 @@
 <head>
     <title>Test popup</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.css">
-    <script src="https://rawgit.com/clubajax/dom/master/src/dom.js"></script>
-    <script src="https://rawgit.com/clubajax/on/master/src/key-poly.js"></script>
-    <script src="https://rawgit.com/clubajax/on/master/src/on.js"></script>
+    <script src="../bower_components/dom/src/dom.js"></script>
+    <script src="../bower_components/on/src/key-poly.js"></script>
+    <script src="../bower_components/on/src/on.js"></script>
+    <script src="../bower_components/fx/src/fx.js"></script>
     <script src="../src/popup.js"></script>
+    <script src="../src/fade.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
+    <style>
+        .red-box{
+            border: 1px solid #999;
+            background: red;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
 </head>
 <body>
     <h1>popup test</h1>
@@ -31,7 +41,7 @@
                 return !!n && !!dom.isNode(n) && !!n.parentNode;
             }
 
-            suite('lib.popNode.destroy', function () {
+            xsuite('popup.destroy', function () {
                 test('it should destroy properly', function () {
                     var
                         popNode,
@@ -53,7 +63,7 @@
 
             });
 
-            suite('lib.popNode.show/hide', function () {
+            xsuite('popup.show/hide', function () {
 
 
                 test('it should show and hide and destroy', function () {
@@ -157,7 +167,7 @@
                 });
             });
 
-            suite('lib.popNode.clickoff', function () {
+            xsuite('popup.clickoff', function () {
 
                 test('it should open and close by button click', function (done) {
                     var
@@ -260,6 +270,38 @@
                 });
             });
 
+            suite('popup.fade', function () {
+                test('it should fade in', function (done) {
+                    var
+                        popNode,
+                        handle = popup({
+                            animate: 'fade',
+                            speed: 200,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id: 'a'});
+                            }
+                        });
+
+                    handle.on('open', function () {
+                        popNode = dom.byId('a');
+                        expect(dom.style(popNode, 'opacity')).to.equal(1);
+                        handle.close();
+                        handle.on('close', function () {
+                            expect(dom.style(handle.popup, 'opacity')).to.equal(0);
+                            expect(dom.style(handle.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+
+
+//                    handle.destroy();
+//
+//                    popNode = dom.byId('a');
+//                    expect(dom.isNode(popNode)).to.equal(false);
+                });
+
+            });
         });
 
         mocha.run();

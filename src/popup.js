@@ -2,7 +2,17 @@
 
     function noop () {}
 
-    window.popup = function (options) {
+    var plugins = {};
+
+    function addPlugin (plugin) {
+        plugins[plugin.type] = plugins[plugin.type] || {};
+        if(plugins[plugin.type][plugin.name]){
+            throw Error('A popup plugin can only be installed once: ' + plugin.type + ' - ' + plugin.name);
+        }
+        plugins[plugin.type][plugin.name] = plugin;
+    }
+
+    function popup (options) {
         // options:
         //  create: function that lazily creates popup (must return one node)
         //  input: button or input that opens popup
@@ -16,7 +26,18 @@
         //  destroyOnClose Boolean
 
         return createController(options);
-    };
+    }
+
+    function getPlugin (type, name) {
+        if(!plugins[type] || !plugins[type][name]){
+            return null;
+        }
+        return plugins[type][name];
+    }
+
+    popup.plugins = plugins;
+    popup.addPlugin = addPlugin;
+    window.popup = popup;
 
     function createController (options) {
         var
@@ -51,20 +72,40 @@
                 handleClose();
             }
             showing = true;
-            popup.style.display = '';
-            on.fire(controller, 'open');
+
+            var plugin = getPlugin('animate', options.animate);
+            if(!plugin){
+                popup.style.display = '';
+                on.fire(controller, 'open');
+            }else{
+                plugin.show(options, popup, options.input, function () {
+                    on.fire(controller, 'open');
+                });
+            }
+
         }
 
         function hide () {
             function close () {
                 log && console.log('close');
-                if(options.destroyOnClose){
-                    destroy();
-                }else{
-                    popup.style.display = 'none';
-                }
                 showing = false;
-                on.fire(controller, 'close');
+                function finish () {
+                    if(options.destroyOnClose){
+                        destroy();
+                    }else{
+                        popup.style.display = 'none';
+                    }
+                    on.fire(controller, 'close');
+                }
+                var plugin = getPlugin('animate', options.animate);
+                if(!plugin){
+                    finish();
+                }else{
+                    plugin.hide(options, popup, options.input, finish);
+                }
+
+
+
             }
             if(showing === false){ return; }
             if(node){
