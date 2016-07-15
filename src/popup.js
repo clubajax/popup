@@ -46,7 +46,7 @@
             showing,
             clickoffHandle,
             handles = [],
-            log = 0,
+            log = 1,
             controller = dom('div');
 
         controller.on = function (eventName, selector, callback) {
@@ -79,6 +79,7 @@
                 on.fire(controller, 'open');
             }else{
                 plugin.show(options, popup, options.input, function () {
+                    console.log('done show');
                     on.fire(controller, 'open');
                 });
             }
@@ -103,10 +104,8 @@
                 }else{
                     plugin.hide(options, popup, options.input, finish);
                 }
-
-
-
             }
+
             if(showing === false){ return; }
             if(node){
                 log && console.log('hide');

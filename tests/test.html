@@ -9,6 +9,7 @@
     <script src="../bower_components/fx/src/fx.js"></script>
     <script src="../src/popup.js"></script>
     <script src="../src/fade.js"></script>
+    <script src="../src/wipe.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
     <style>
@@ -270,7 +271,7 @@
                 });
             });
 
-            suite('popup.fade', function () {
+            xsuite('popup.fade', function () {
                 test('it should fade in', function (done) {
                     var
                         popNode,
@@ -294,13 +295,34 @@
                         });
                     });
 
-
-//                    handle.destroy();
-//
-//                    popNode = dom.byId('a');
-//                    expect(dom.isNode(popNode)).to.equal(false);
                 });
+            });
 
+            suite('popup.wipe', function () {
+                test('it should expand and collapse', function (done) {
+                    var
+                        popNode,
+                        handle = popup({
+                            animate: 'wipe',
+                            speed: 200,
+                            create: function () {
+                                return dom('div', {className: 'red-box', id: 'a'});
+                            }
+                        });
+
+                    handle.on('open', function () {
+                        popNode = dom.byId('a');
+                        expect(dom.style(popNode, 'opacity')).to.equal(1);
+                        handle.close();
+                        handle.on('close', function () {
+                            expect(dom.style(handle.popup, 'height')).to.equal(0);
+                            expect(dom.style(handle.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+
+                });
             });
         });
 
