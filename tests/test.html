@@ -10,19 +10,34 @@
     <script src="../src/popup.js"></script>
     <script src="../src/fade.js"></script>
     <script src="../src/wipe.js"></script>
+    <script src="../src/position.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
     <style>
         .red-box{
             border: 1px solid #999;
             background: red;
+            padding: 10px;
             width: 100px;
             height: 100px;
+        }
+        input{
+            font-size: 14px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            background: #fff;
+            border-radius: 5px;
+        }
+        #inp1{
+            position: absolute;
+            top: 100px;
+            right: 200px;
         }
     </style>
 </head>
 <body>
     <h1>popup test</h1>
+    <input id="inp1" value="haz popup"/>
     <div id="mocha"></div>
     <script>
 
@@ -33,7 +48,8 @@
             var suite = window.suite,
                 dom = window.dom,
                 on = window.on,
-                expect = chai.expect;
+                expect = chai.expect,
+                listHtml = '<div>list item A<br>list item B<br>list item C</div>';
 
             function xsuite () {}
             function xtest () {}
@@ -279,7 +295,7 @@
                             animate: 'fade',
                             speed: 200,
                             create: function () {
-                                return dom('div', {className: 'red-box', id: 'a'});
+                                return dom('div', {className: 'red-box', id: 'a', html: listHtml});
                             }
                         });
 
@@ -298,7 +314,7 @@
                 });
             });
 
-            suite('popup.wipe', function () {
+            xsuite('popup.wipe', function () {
                 test('it should expand and collapse', function (done) {
                     var
                         popNode,
@@ -306,7 +322,7 @@
                             animate: 'wipe',
                             speed: 200,
                             create: function () {
-                                return dom('div', {className: 'red-box', id: 'a'});
+                                return dom('div', {className: 'red-box', id: 'a', html: 'list item A<br>list item B<br>list item C<br>'});
                             }
                         });
 
@@ -314,6 +330,38 @@
                         popNode = dom.byId('a');
                         expect(dom.style(popNode, 'opacity')).to.equal(1);
                         handle.close();
+                        handle.on('close', function () {
+                            expect(dom.style(handle.popup, 'height')).to.equal(0);
+                            expect(dom.style(handle.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+
+                });
+            });
+
+            suite('popup.position', function () {
+                test('it should position under the input', function (done) {
+                    var
+                        popNode,
+                        input = dom.byId('inp1'),
+                        handle = popup({
+                            input: input,
+                            animate: 'wipe',
+                            speed: 200,
+                            position: 'BL',
+                            create: function () {
+                                console.log('CREATE');
+                                return dom('div', {className: 'red-box', id: 'a', html: listHtml});
+                            }
+                        });
+
+                    handle.on('open', function () {
+                        popNode = dom.byId('a');
+                        expect(dom.style(popNode, 'opacity')).to.equal(1);
+                        //handle.close();
+                        done();
                         handle.on('close', function () {
                             expect(dom.style(handle.popup, 'height')).to.equal(0);
                             expect(dom.style(handle.popup, 'display')).to.equal('none');

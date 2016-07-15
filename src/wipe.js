@@ -4,7 +4,6 @@
         type: 'animate',
         name: 'wipe',
         show: function (options, popup, input, callback) {
-            console.log('WIPE IN', popup);
             fx.height(popup, {
                 startHeight: 0,
                 height: 'auto',
@@ -13,7 +12,6 @@
             })
         },
         hide: function (options, popup, input, callback) {
-            console.log('WIPE OUT', popup);
             fx.height(popup, {
                 height: 0,
                 speed: options.speed,

@@ -73,12 +73,19 @@
             }
             showing = true;
 
-            var plugin = getPlugin('animate', options.animate);
-            if(!plugin){
+            var
+                posPlugin = getPlugin('position', options.position),
+                aniPlugin = getPlugin('animate', options.animate);
+
+            if(posPlugin){
+                posPlugin.place(options, popup, options.input);
+            }
+
+            if(!aniPlugin){
                 popup.style.display = '';
                 on.fire(controller, 'open');
             }else{
-                plugin.show(options, popup, options.input, function () {
+                aniPlugin.show(options, popup, options.input, function () {
                     console.log('done show');
                     on.fire(controller, 'open');
                 });
@@ -134,6 +141,9 @@
             if(options.input){
                 if(options.openOn === 'click'){
                     handles.push(on(options.input, 'click', show));
+                }else{
+                    console.log('*no openOn');
+                    show();
                 }
             }
             else{
