@@ -4,6 +4,10 @@
 
     var plugins = {};
 
+    function tick (callback) {
+        window.requestAnimationFrame(callback);
+    }
+
     function addPlugin (plugin) {
         plugins[plugin.type] = plugins[plugin.type] || {};
         if(plugins[plugin.type][plugin.name]){
@@ -29,10 +33,17 @@
     }
 
     function getPlugin (type, name) {
-        if(!plugins[type] || !plugins[type][name]){
+        if(!name){
             return null;
         }
-        return plugins[type][name];
+        if(plugins[type]){
+            if(!plugins[type][name]){
+                console.warn('No position plugin found for `'+name+'`');
+            }else{
+                return plugins[type][name];
+            }
+        }
+        return null;
     }
 
     popup.plugins = plugins;
@@ -45,8 +56,10 @@
             popup,
             showing,
             clickoffHandle,
+            posPlugin,
+            aniPlugin,
             handles = [],
-            log = 1,
+            log = 0,
             controller = dom('div');
 
         controller.on = function (eventName, selector, callback) {
@@ -65,7 +78,7 @@
             log && console.log('show');
             if(!node){
                 node = options.create();
-                popup = dom('div', {className: 'ay-popup', attr:{tabindex:0}}, document.body);
+                popup = dom('div', {className: 'ay-popup', style:{display:'inline-block'}, attr:{tabindex:0}}, document.body);
                 controller.popup = popup;
                 controller.node = node;
                 popup.appendChild(node);
@@ -73,9 +86,8 @@
             }
             showing = true;
 
-            var
-                posPlugin = getPlugin('position', options.position),
-                aniPlugin = getPlugin('animate', options.animate);
+            posPlugin = getPlugin('position', options.position);
+            aniPlugin = getPlugin('animate', options.animate);
 
             if(posPlugin){
                 posPlugin.place(options, popup, options.input);
@@ -83,7 +95,10 @@
 
             if(!aniPlugin){
                 popup.style.display = '';
-                on.fire(controller, 'open');
+                tick(function () {
+                    log && console.log('fire.open');
+                    on.fire(controller, 'open');
+                });
             }else{
                 aniPlugin.show(options, popup, options.input, function () {
                     console.log('done show');
@@ -95,15 +110,26 @@
 
         function hide () {
             function close () {
-                log && console.log('close');
+                log && console.log('hide');
+
                 showing = false;
                 function finish () {
+                    log && console.log('finish');
                     if(options.destroyOnClose){
                         destroy();
                     }else{
                         popup.style.display = 'none';
                     }
-                    on.fire(controller, 'close');
+                    if(posPlugin && posPlugin.onClose){
+                        posPlugin.onClose(options, popup, options.input);
+                    }
+                    if(aniPlugin && aniPlugin.onClose){
+                        aniPlugin.onClose(options, popup, options.input);
+                    }
+                    log && console.log('fire.close');
+                    tick(function () {
+                        on.fire(controller, 'close');
+                    });
                 }
                 var plugin = getPlugin('animate', options.animate);
                 if(!plugin){
@@ -115,7 +141,7 @@
 
             if(showing === false){ return; }
             if(node){
-                log && console.log('hide');
+                log && console.log('check.hide');
                 if(options.closeDelay){
                     setTimeout(close, options.closeDelay);
                 }else{

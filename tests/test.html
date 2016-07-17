@@ -21,6 +21,9 @@
             width: 100px;
             height: 100px;
         }
+        .wide{
+            width: 300px;
+        }
         input{
             font-size: 14px;
             padding: 5px;
@@ -45,7 +48,9 @@
 
         suite('popNode', function() {
 
-            var suite = window.suite,
+            var
+                closeDelay = 500,
+                suite = window.suite,
                 dom = window.dom,
                 on = window.on,
                 expect = chai.expect,
@@ -62,7 +67,7 @@
                 test('it should destroy properly', function () {
                     var
                         popNode,
-                        handle = popup({
+                        controller = popup({
                             create: function () {
                                 return dom('div', {className: 'red-box', id: 'a'});
                             }
@@ -72,7 +77,7 @@
 
                     expect(dom.isNode(popNode)).to.equal(true);
 
-                    handle.destroy();
+                    controller.destroy();
 
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(false);
@@ -86,7 +91,7 @@
                 test('it should show and hide and destroy', function () {
                     var
                         popNode,
-                        handle = popup({
+                        controller = popup({
                             destroyOnClose: true,
                             create: function () {
                                 return dom('div', {className: 'red-box', id:'a'});
@@ -96,77 +101,77 @@
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(true);
 
-                    handle.close();
+                    controller.close();
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(false);
 
-                    handle.open();
+                    controller.open();
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(true);
 
-                    handle.close();
+                    controller.close();
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(false);
 
-                    handle.destroy();
+                    controller.destroy();
                 });
 
                 test('it should emit `open` and `close` events', function () {
                     var
                         opened = false,
                         closed = false,
-                        handle = popup({
+                        controller = popup({
                             openOn: 'self',
                             destroyOnClose: true,
                             create: function () {
                                 return dom('div', {className: 'red-box', id:'a'});
                             }
                         });
-                    handle.on('open', function () {
+                    controller.on('open', function () {
                         opened = true;
                     });
-                    handle.open();
+                    controller.open();
 
-                    handle.on('close', function () {
+                    controller.on('close', function () {
                         closed = true;
                     });
-                    handle.close();
+                    controller.close();
                     expect(opened).to.equal(true);
 
-                    handle.close();
+                    controller.close();
                     expect(closed).to.equal(true);
 
-                    handle.destroy();
+                    controller.destroy();
                 });
 
                 test('it should show and hide without destroy', function () {
                     var
-                        handle = popup({
+                        controller = popup({
                             destroyOnClose: false,
                             create: function () {
                                 return dom('div', {className: 'red-box', id:'a'});
                             }
                         });
 
-                    expect(handle.popup.style.display).to.equal('');
+                    expect(controller.popup.style.display).to.equal('');
 
-                    handle.close();
-                    expect(handle.popup.style.display).to.equal('none');
+                    controller.close();
+                    expect(controller.popup.style.display).to.equal('none');
 
-                    handle.open();
-                    expect(handle.popup.style.display).to.equal('');
+                    controller.open();
+                    expect(controller.popup.style.display).to.equal('');
 
-                    handle.close();
-                    expect(handle.popup.style.display).to.equal('none');
+                    controller.close();
+                    expect(controller.popup.style.display).to.equal('none');
 
-                    handle.destroy();
+                    controller.destroy();
 
-                    handle.open();
+                    controller.open();
                 });
 
                 test('it should not open after destroyed', function () {
                     var
-                        handle = popup({
+                        controller = popup({
                             destroyOnClose: false,
                             create: function () {
                                 return dom('div', {className: 'red-box', id:'a'});
@@ -174,13 +179,13 @@
                         });
 
 
-                    handle.close();
-                    expect(handle.popup.style.display).to.equal('none');
+                    controller.close();
+                    expect(controller.popup.style.display).to.equal('none');
 
-                    handle.destroy();
+                    controller.destroy();
 
-                    handle.open();
-                    expect(handle.popup).to.equal(null);
+                    controller.open();
+                    expect(controller.popup).to.equal(null);
                 });
             });
 
@@ -191,7 +196,7 @@
                         popNode,
                         time = 100,
                         button = dom('button', {html: 'open'}, document.body),
-                        handle = popup({
+                        controller = popup({
                             input: button,
                             openOn: 'click',
                             closeOn: 'clickoff',
@@ -219,7 +224,7 @@
                         popNode,
                         time = 100,
                         button = dom('button', {html: 'open'}, document.body),
-                        handle = popup({
+                        controller = popup({
                             input: button,
                             openOn: 'click',
                             closeOn: 'clickoff',
@@ -254,7 +259,7 @@
                     var
                         popNode,
                         button = dom('button', {html: 'open'}, document.body),
-                        handle = popup({
+                        controller = popup({
                             input: button,
                             openOn: 'click',
                             closeOn: 'clickoff',
@@ -291,7 +296,7 @@
                 test('it should fade in', function (done) {
                     var
                         popNode,
-                        handle = popup({
+                        controller = popup({
                             animate: 'fade',
                             speed: 200,
                             create: function () {
@@ -299,13 +304,13 @@
                             }
                         });
 
-                    handle.on('open', function () {
+                    controller.on('open', function () {
                         popNode = dom.byId('a');
                         expect(dom.style(popNode, 'opacity')).to.equal(1);
-                        handle.close();
-                        handle.on('close', function () {
-                            expect(dom.style(handle.popup, 'opacity')).to.equal(0);
-                            expect(dom.style(handle.popup, 'display')).to.equal('none');
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'opacity')).to.equal(0);
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
                             done();
 
                         });
@@ -318,7 +323,7 @@
                 test('it should expand and collapse', function (done) {
                     var
                         popNode,
-                        handle = popup({
+                        controller = popup({
                             animate: 'wipe',
                             speed: 200,
                             create: function () {
@@ -326,13 +331,13 @@
                             }
                         });
 
-                    handle.on('open', function () {
+                    controller.on('open', function () {
                         popNode = dom.byId('a');
                         expect(dom.style(popNode, 'opacity')).to.equal(1);
-                        handle.close();
-                        handle.on('close', function () {
-                            expect(dom.style(handle.popup, 'height')).to.equal(0);
-                            expect(dom.style(handle.popup, 'display')).to.equal('none');
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'height')).to.equal(0);
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
                             done();
 
                         });
@@ -342,29 +347,121 @@
             });
 
             suite('popup.position', function () {
-                test('it should position under the input', function (done) {
+                xtest('it should position BL', function (done) {
                     var
-                        popNode,
                         input = dom.byId('inp1'),
-                        handle = popup({
+                        controller = popup({
                             input: input,
                             animate: 'wipe',
                             speed: 200,
                             position: 'BL',
                             create: function () {
-                                console.log('CREATE');
-                                return dom('div', {className: 'red-box', id: 'a', html: listHtml});
+                                return dom('div', {className: 'red-box', html: listHtml});
                             }
                         });
 
-                    handle.on('open', function () {
-                        popNode = dom.byId('a');
-                        expect(dom.style(popNode, 'opacity')).to.equal(1);
-                        //handle.close();
-                        done();
-                        handle.on('close', function () {
-                            expect(dom.style(handle.popup, 'height')).to.equal(0);
-                            expect(dom.style(handle.popup, 'display')).to.equal('none');
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top >= ibox.top + ibox.height).to.equal(true);
+                        expect(pbox.left >= ibox.left).to.equal(true);
+
+                        controller.close();
+                        //done();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'height')).to.equal(0);
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+                });
+
+                xtest('it should position TL', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            animate: 'wipe',
+                            speed: 200,
+                            position: 'TL',
+                            create: function () {
+                                return dom('div', {className: 'red-box', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top <= ibox.top - pbox.height).to.equal(true);
+                        expect(pbox.left >= ibox.left).to.equal(true);
+
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'height')).to.equal(0);
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+
+                });
+
+                test('it should position TR', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            position: 'TR',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top <= ibox.top - pbox.height).to.equal(true);
+                        expect(pbox.left + pbox.width == ibox.left + ibox.width).to.equal(true);
+
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+                        });
+                        console.log('ready');
+                    });
+
+                });
+
+                test('it should position BR', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            position: 'BR',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left + pbox.width == ibox.left + ibox.width).to.equal(true);
+
+                        controller.close();
+                        //done();
+                        controller.on('close', function () {
+                            //expect(dom.style(controller.popup, 'height')).to.equal(0);
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
                             done();
 
                         });
