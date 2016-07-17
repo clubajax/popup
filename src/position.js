@@ -26,36 +26,46 @@
         }
     }
 
+    function size (options, popup, input) {
+        var box = {
+            gap: options.gap || gap
+        };
+        if(popup){
+            box.p = dom.box(popup);
+        }
+        if(input){
+            box.i = dom.box(input);
+        }
+        return box;
+    }
+
     function BL (options, popup, input){
-        var iBox = dom.box(input);
+        var box = size(options, null, input);
         dom.style(popup, {
             position: 'absolute',
-            left: iBox.left,
-            top: iBox.top + iBox.height + gap
+            left: box.i.left,
+            top: box.i.top + box.i.height + box.gap
         });
     }
 
     function BR (options, popup, input){
-        var
-            pBox = dom.box(popup),
-            iBox = dom.box(input);
+        var box = size(options, popup, input);
         dom.style(popup, {
             position: 'absolute',
-            left: (iBox.left + iBox.width) - pBox.width,
-            top: iBox.top + iBox.height + gap
+            left: (box.i.left + box.i.width) - box.p.width,
+            top: box.i.top + box.i.height + box.gap
         });
     }
 
     function TL (options, popup, input){
         var
-            pBox = dom.box(popup),
-            iBox = dom.box(input),
-            pinNode = pin(popup, pBox);
+            box = size(options, popup, input),
+            pinNode = pin(popup, box.p);
 
         dom.style(pinNode, {
             position: 'absolute',
-            left: iBox.left,
-            top: iBox.top - pBox.height - gap
+            left: box.i.left,
+            top: box.i.top - box.p.height - box.gap
         });
         dom.style(popup, {
             position: 'absolute',
@@ -66,16 +76,13 @@
 
     function TR (options, popup, input){
         var
-            pBox = dom.box(popup),
-            iBox = dom.box(input),
-            pinNode = pin(popup, pBox);
-
-        console.log(pBox.width, 'iBox', iBox);
+            box = size(options, popup, input),
+            pinNode = pin(popup, box.p);
 
         dom.style(pinNode, {
             position: 'absolute',
-            left: (iBox.left + iBox.width) - pBox.width,
-            top: iBox.top - pBox.height - gap
+            left: (box.i.left + box.i.width) - box.p.width,
+            top: box.i.top - box.p.height - box.gap
         });
         dom.style(popup, {
             position: 'absolute',
