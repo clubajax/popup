@@ -347,7 +347,7 @@
             });
 
             suite('popup.position', function () {
-                test('it should position BL', function (done) {
+                xtest('it should position BL', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -378,7 +378,7 @@
                     });
                 });
 
-                test('it should position TL', function (done) {
+                xtest('it should position TL', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -409,7 +409,7 @@
 
                 });
 
-                test('it should position TR', function (done) {
+                xtest('it should position TR', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -438,7 +438,7 @@
 
                 });
 
-                test('it should position BR', function (done) {
+                xtest('it should position BR', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -458,15 +458,124 @@
                         expect(pbox.left + pbox.width == ibox.left + ibox.width).to.equal(true);
 
                         controller.close();
-                        //done();
                         controller.on('close', function () {
-                            //expect(dom.style(controller.popup, 'height')).to.equal(0);
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
                             done();
 
                         });
                     });
+                });
 
+                test('it should position BC', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            position: 'BC',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left + (pbox.width/2) == ibox.left + (ibox.width/2)).to.equal(true);
+
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+                });
+
+                test('it should position TC', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            position: 'TC',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left + (pbox.width/2) == ibox.left + (ibox.width/2)).to.equal(true);
+
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+                });
+
+                test('it should position CL', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            position: 'CL',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left < ibox.left).to.equal(true);
+
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
+                });
+
+                test('it should position CR', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            position: 'CR',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left > ibox.left + ibox.width).to.equal(true);
+
+                        controller.close();
+                        controller.on('close', function () {
+                            expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            done();
+
+                        });
+                    });
                 });
             });
         });

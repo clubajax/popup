@@ -57,6 +57,33 @@
         });
     }
 
+    function BC (options, popup, input){
+        var box = size(options, popup, input);
+        dom.style(popup, {
+            position: 'absolute',
+            left: (box.i.left + box.i.width/2) - (box.p.width/2),
+            top: box.i.top + box.i.height + box.gap
+        });
+    }
+
+    function CL (options, popup, input){
+        var box = size(options, popup, input);
+        dom.style(popup, {
+            position: 'absolute',
+            left: box.i.left - box.p.width - box.gap,
+            top: box.i.top + box.i.height/2 - box.p.height/2
+        });
+    }
+
+    function CR (options, popup, input){
+        var box = size(options, popup, input);
+        dom.style(popup, {
+            position: 'absolute',
+            left: box.i.left + box.i.width + box.gap,
+            top: box.i.top + box.i.height/2 - box.p.height/2
+        });
+    }
+
     function TL (options, popup, input){
         var
             box = size(options, popup, input),
@@ -91,6 +118,23 @@
         });
     }
 
+    function TC (options, popup, input){
+        var
+            box = size(options, popup, input),
+            pinNode = pin(popup, box.p);
+
+        dom.style(pinNode, {
+            position: 'absolute',
+            left: (box.i.left + box.i.width/2) - box.p.width/2,
+            top: box.i.top - box.p.height - box.gap
+        });
+        dom.style(popup, {
+            position: 'absolute',
+            left: 0,
+            bottom: 0
+        });
+    }
+
     plugins = [{
         type: 'position',
         name: 'BL',
@@ -109,6 +153,23 @@
         name: 'TR',
         place: TR,
         onClose: removePin
+    },{
+        type: 'position',
+        name: 'TC',
+        place: TC,
+        onClose: removePin
+    },{
+        type: 'position',
+        name: 'BC',
+        place: BC
+    },{
+        type: 'position',
+        name: 'CL',
+        place: CL
+    },{
+        type: 'position',
+        name: 'CR',
+        place: CR
     }];
 
     plugins.forEach(popup.addPlugin);
