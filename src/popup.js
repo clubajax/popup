@@ -117,7 +117,7 @@
                     log && console.log('finish');
                     if(options.destroyOnClose){
                         destroy();
-                    }else{
+                    }else if(popup){ // may be destroyed
                         popup.style.display = 'none';
                     }
                     if(posPlugin && posPlugin.onClose){

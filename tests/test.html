@@ -10,7 +10,7 @@
     <script src="../src/popup.js"></script>
     <script src="../src/fade.js"></script>
     <script src="../src/wipe.js"></script>
-    <script src="../src/position.js"></script>
+    <script src="../src/trbl.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
     <style>
@@ -85,9 +85,12 @@
             }
 
             // TODO:
-            //  clean up popup nodes after tests
-            //  add UIDs?
+            //  drop-down (top space vs bottom space)
+            //  scrollable
             //  className options
+            //  click to open options
+            //  test gap
+            //  build step
 
             suite('popup.destroy', function () {
                 test('it should destroy properly', function () {
@@ -168,7 +171,7 @@
                         expect(closed).to.equal(true);
                         controller.destroy();
                         done();
-                    });
+                    },100);
                 });
 
                 test('it should show and hide without destroy', function () {
