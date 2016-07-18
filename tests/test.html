@@ -83,7 +83,7 @@
                 return !!n && !!dom.isNode(n) && !!n.parentNode;
             }
 
-            xsuite('popup.destroy', function () {
+            suite('popup.destroy', function () {
                 test('it should destroy properly', function () {
                     var
                         popNode,
@@ -105,7 +105,7 @@
 
             });
 
-            xsuite('popup.show/hide', function () {
+            suite('popup.show/hide', function () {
 
 
                 test('it should show and hide and destroy', function () {
@@ -136,7 +136,7 @@
                     controller.destroy();
                 });
 
-                test('it should emit `open` and `close` events', function () {
+                test('it should emit `open` and `close` events', function (done) {
                     var
                         opened = false,
                         closed = false,
@@ -156,12 +156,13 @@
                         closed = true;
                     });
                     controller.close();
-                    expect(opened).to.equal(true);
 
-                    controller.close();
-                    expect(closed).to.equal(true);
-
-                    controller.destroy();
+                    setTimeout(function () {
+                        expect(opened).to.equal(true);
+                        expect(closed).to.equal(true);
+                        controller.destroy();
+                        done();
+                    });
                 });
 
                 test('it should show and hide without destroy', function () {
@@ -209,7 +210,7 @@
                 });
             });
 
-            xsuite('popup.clickoff', function () {
+            suite('popup.clickoff', function () {
 
                 test('it should open and close by button click', function (done) {
                     var
@@ -312,7 +313,7 @@
                 });
             });
 
-            xsuite('popup.fade', function () {
+            suite('popup.fade', function () {
                 test('it should fade in', function (done) {
                     var
                         popNode,
@@ -339,7 +340,7 @@
                 });
             });
 
-            xsuite('popup.wipe', function () {
+            suite('popup.wipe', function () {
                 test('it should expand and collapse', function (done) {
                     var
                         popNode,
@@ -366,7 +367,7 @@
                 });
             });
 
-            xsuite('popup.position', function () {
+            suite('popup.position', function () {
                 test('it should position BL', function (done) {
                     var
                         input = dom.byId('inp1'),
@@ -620,6 +621,7 @@
                         expect(pbox.top < ibox.top).to.equal(true);
                         expect(pbox.left < ibox.left).to.equal(true);
                         controller.close();
+                        dom.destroy(input);
                         done();
                     });
                 });
@@ -644,6 +646,7 @@
                         expect(pbox.top < ibox.top).to.equal(true);
                         expect(pbox.left >= ibox.left).to.equal(true);
                         controller.close();
+                        dom.destroy(input);
                         done();
                     });
                 });
@@ -664,10 +667,11 @@
                     controller.on('open', function () {
                         var ibox = dom.box(input),
                             pbox = dom.box(controller.popup);
-
+debugger
                         expect(pbox.top > ibox.top).to.equal(true);
                         expect(pbox.left >= ibox.left).to.equal(true);
                         controller.close();
+                        dom.destroy(input);
                         done();
                     });
                 });
@@ -692,6 +696,7 @@
                         expect(pbox.top > ibox.top).to.equal(true);
                         expect(pbox.left < ibox.left).to.equal(true);
                         controller.close();
+                        dom.destroy(input);
                         done();
                     });
                 });
