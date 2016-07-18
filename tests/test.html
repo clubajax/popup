@@ -69,7 +69,8 @@
         suite('popNode', function() {
 
             var
-                closeDelay = 500,
+                closeDelay = 100,
+                aniSpeed = 100,
                 suite = window.suite,
                 dom = window.dom,
                 on = window.on,
@@ -82,6 +83,11 @@
                 var n = dom.byId(id);
                 return !!n && !!dom.isNode(n) && !!n.parentNode;
             }
+
+            // TODO:
+            //  clean up popup nodes after tests
+            //  add UIDs?
+            //  className options
 
             suite('popup.destroy', function () {
                 test('it should destroy properly', function () {
@@ -187,7 +193,6 @@
 
                     controller.destroy();
 
-                    controller.open();
                 });
 
                 test('it should not open after destroyed', function () {
@@ -235,6 +240,7 @@
                         setTimeout(function () {
                             popNode = dom.byId('a');
                             expect(dom.isNode(popNode)).to.equal(false);
+                            controller.destroy();
                             done();
                         },time);
                     },time);
@@ -269,6 +275,7 @@
                                 setTimeout(function () {
                                     popNode = dom.byId('a');
                                     expect(dom.isNode(popNode)).to.equal(false);
+                                    controller.destroy();
                                     done();
                                 },time);
                             },time);
@@ -305,6 +312,7 @@
                             setTimeout(function () {
                                 popNode = dom.byId('a');
                                 expect(dom.isNode(popNode)).to.equal(false);
+                                controller.destroy();
                                 done();
                             },300);
                         },300);
@@ -319,7 +327,7 @@
                         popNode,
                         controller = popup({
                             animate: 'fade',
-                            speed: 200,
+                            speed: aniSpeed,
                             create: function () {
                                 return dom('div', {className: 'red-box', id: 'a', html: listHtml});
                             }
@@ -332,6 +340,7 @@
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'opacity')).to.equal(0);
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
 
                         });
@@ -346,7 +355,7 @@
                         popNode,
                         controller = popup({
                             animate: 'wipe',
-                            speed: 200,
+                            speed: aniSpeed,
                             create: function () {
                                 return dom('div', {className: 'red-box', id: 'a', html: 'list item A<br>list item B<br>list item C<br>'});
                             }
@@ -359,6 +368,7 @@
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'height')).to.equal(0);
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
 
                         });
@@ -389,10 +399,10 @@
                         expect(pbox.left >= ibox.left).to.equal(true);
 
                         controller.close();
-                        //done();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'height')).to.equal(0);
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
 
                         });
@@ -423,6 +433,7 @@
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'height')).to.equal(0);
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
 
                         });
@@ -452,9 +463,9 @@
                         controller.close();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
                         });
-                        console.log('ready');
                     });
 
                 });
@@ -481,6 +492,7 @@
                         controller.close();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
 
                         });
@@ -509,8 +521,8 @@
                         controller.close();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
-
                         });
                     });
                 });
@@ -537,8 +549,8 @@
                         controller.close();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
-
                         });
                     });
                 });
@@ -565,8 +577,8 @@
                         controller.close();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
-
                         });
                     });
                 });
@@ -593,8 +605,8 @@
                         controller.close();
                         controller.on('close', function () {
                             expect(dom.style(controller.popup, 'display')).to.equal('none');
+                            controller.destroy();
                             done();
-
                         });
                     });
                 });
@@ -622,6 +634,7 @@
                         expect(pbox.left < ibox.left).to.equal(true);
                         controller.close();
                         dom.destroy(input);
+                        controller.destroy();
                         done();
                     });
                 });
@@ -647,6 +660,7 @@
                         expect(pbox.left >= ibox.left).to.equal(true);
                         controller.close();
                         dom.destroy(input);
+                        controller.destroy();
                         done();
                     });
                 });
@@ -667,11 +681,12 @@
                     controller.on('open', function () {
                         var ibox = dom.box(input),
                             pbox = dom.box(controller.popup);
-debugger
+
                         expect(pbox.top > ibox.top).to.equal(true);
                         expect(pbox.left >= ibox.left).to.equal(true);
                         controller.close();
                         dom.destroy(input);
+                        controller.destroy();
                         done();
                     });
                 });
@@ -697,6 +712,7 @@ debugger
                         expect(pbox.left < ibox.left).to.equal(true);
                         controller.close();
                         dom.destroy(input);
+                        controller.destroy();
                         done();
                     });
                 });
