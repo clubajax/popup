@@ -31,6 +31,26 @@
             background: #fff;
             border-radius: 5px;
         }
+        .BR{
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+        }
+        .TR{
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+        .TL{
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+        .BL{
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+        }
         #inp1{
             position: absolute;
             top: 100px;
@@ -346,8 +366,8 @@
                 });
             });
 
-            suite('popup.position', function () {
-                xtest('it should position BL', function (done) {
+            xsuite('popup.position', function () {
+                test('it should position BL', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -378,7 +398,7 @@
                     });
                 });
 
-                xtest('it should position TL', function (done) {
+                test('it should position TL', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -409,7 +429,7 @@
 
                 });
 
-                xtest('it should position TR', function (done) {
+                test('it should position TR', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -438,7 +458,7 @@
 
                 });
 
-                xtest('it should position BR', function (done) {
+                test('it should position BR', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -575,6 +595,104 @@
                             done();
 
                         });
+                    });
+                });
+            });
+
+            suite('popup.position.auto', function () {
+                test('it should position in the BR corner', function (done) {
+                    var
+                        input = dom('input', {class:'BR'}, document.body),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'BL',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left < ibox.left).to.equal(true);
+                        controller.close();
+                        done();
+                    });
+                });
+
+                test('it should position in the BL corner', function (done) {
+                    var
+                        input = dom('input', {class:'BL'}, document.body),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'BR',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left >= ibox.left).to.equal(true);
+                        controller.close();
+                        done();
+                    });
+                });
+
+                test('it should position in the TL corner', function (done) {
+                    var
+                        input = dom('input', {class:'TL'}, document.body),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'TR',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left >= ibox.left).to.equal(true);
+                        controller.close();
+                        done();
+                    });
+                });
+
+                test('it should position in the TR corner', function (done) {
+                    var
+                        input = dom('input', {class:'TR'}, document.body),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'TL',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box wide', html: listHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left < ibox.left).to.equal(true);
+                        controller.close();
+                        done();
                     });
                 });
             });

@@ -2,18 +2,21 @@
 
     var
         order,
+        place,
         plugins,
         PIN_CLASS = 'pin',
         popup = window.popup,
         gap = 5;
 
     order = {
-        BL:'BL,BR,BC,TL,TR,TC'.split(','),
-        TL:'TL,TR,TC,BL,BR.BC'.split(',')
+        BL:'BL,BR,TL,TR'.split(','),
+        BR: 'BR,BL,TR,TL'.split(','),
+        TL:'TL,TR,BL,BR'.split(','),
+        TR: 'TR,TL,BR,BL'.split(',')
     };
 
     function pin (popup, box){
-        var pin = dom('div', {class: PIN_CLASS, style:{height: box.height, width:box.width}}, document.body);
+        var pin = dom('div', {class: PIN_CLASS, style:{height: box.p.height, width:box.p.width}}, document.body);
         pin.appendChild(popup);
         return pin
     }
@@ -39,137 +42,185 @@
         return box;
     }
 
-    function BL (options, popup, input){
-        var box = size(options, null, input);
-        dom.style(popup, {
-            position: 'absolute',
-            left: box.i.left,
-            top: box.i.top + box.i.height + box.gap
-        });
+    function autoPlace (options, popup, input, box, posOrder ) {
+        if(!options.auto){
+            return false;
+        }
+        var i, p, win = dom.box(window);
+        if(!posOrder || !posOrder.length){
+            console.log('`auto` not available for center positions');
+            return false;
+        }
+
+        p = posOrder.shift().split('');
+        if(p[0] === 'B'){
+            if( box.i.top + box.i.height + box.gap + box.p.top + box.p.height > win.height ){
+                return autoPlace(options, popup, input, box, posOrder);
+            }
+        }
+        else{
+            if( box.i.top + - box.gap - box.p.height < 0 ){
+                return autoPlace(options, popup, input, box, posOrder);
+            }
+        }
+
+        if(p[1] === 'R'){
+            if( box.i.left - box.gap - box.p.width < 0 ){
+                return autoPlace(options, popup, input, box, posOrder);
+            }
+        }
+        else{
+            if( box.i.left + box.i.width + box.gap + box.p.width > win.width ){
+                return autoPlace(options, popup, input, box, posOrder);
+            }
+        }
+
+        place[p.join('')](options, popup, input, box);
+        return true;
     }
 
-    function BR (options, popup, input){
-        var box = size(options, popup, input);
-        dom.style(popup, {
-            position: 'absolute',
-            left: (box.i.left + box.i.width) - box.p.width,
-            top: box.i.top + box.i.height + box.gap
-        });
-    }
+    place = {
 
-    function BC (options, popup, input){
-        var box = size(options, popup, input);
-        dom.style(popup, {
-            position: 'absolute',
-            left: (box.i.left + box.i.width/2) - (box.p.width/2),
-            top: box.i.top + box.i.height + box.gap
-        });
-    }
+        BL: function (options, popup, input, force) {
+            var box = force || size(options, popup, input);
+            if (!force && autoPlace(options, popup, input, box, order.BL)) { return; }
+            dom.style(popup, {
+                position: 'absolute',
+                left: box.i.left,
+                top: box.i.top + box.i.height + box.gap
+            });
+        },
 
-    function CL (options, popup, input){
-        var box = size(options, popup, input);
-        dom.style(popup, {
-            position: 'absolute',
-            left: box.i.left - box.p.width - box.gap,
-            top: box.i.top + box.i.height/2 - box.p.height/2
-        });
-    }
+        BR: function (options, popup, input, force) {
+            var box = force || size(options, popup, input);
+            if (!force && autoPlace(options, popup, input, box, order.BR)) { return; }
+            dom.style(popup, {
+                position: 'absolute',
+                left: (box.i.left + box.i.width) - box.p.width,
+                top: box.i.top + box.i.height + box.gap
+            });
+        },
 
-    function CR (options, popup, input){
-        var box = size(options, popup, input);
-        dom.style(popup, {
-            position: 'absolute',
-            left: box.i.left + box.i.width + box.gap,
-            top: box.i.top + box.i.height/2 - box.p.height/2
-        });
-    }
+        BC: function (options, popup, input) {
+            var box = size(options, popup, input);
+            dom.style(popup, {
+                position: 'absolute',
+                left: (box.i.left + box.i.width / 2) - (box.p.width / 2),
+                top: box.i.top + box.i.height + box.gap
+            });
+        },
 
-    function TL (options, popup, input){
-        var
-            box = size(options, popup, input),
-            pinNode = pin(popup, box.p);
+        CL: function (options, popup, input) {
+            var box = size(options, popup, input);
+            dom.style(popup, {
+                position: 'absolute',
+                left: box.i.left - box.p.width - box.gap,
+                top: box.i.top + box.i.height / 2 - box.p.height / 2
+            });
+        },
 
-        dom.style(pinNode, {
-            position: 'absolute',
-            left: box.i.left,
-            top: box.i.top - box.p.height - box.gap
-        });
-        dom.style(popup, {
-            position: 'absolute',
-            left: 0,
-            bottom: 0
-        });
-    }
+        CR: function (options, popup, input) {
+            var box = size(options, popup, input);
+            dom.style(popup, {
+                position: 'absolute',
+                left: box.i.left + box.i.width + box.gap,
+                top: box.i.top + box.i.height / 2 - box.p.height / 2
+            });
+        },
 
-    function TR (options, popup, input){
-        var
-            box = size(options, popup, input),
-            pinNode = pin(popup, box.p);
+        TL: function (options, popup, input, force) {
+            var
+                pinNode,
+                box = force || size(options, popup, input);
+            if (!force && autoPlace(options, popup, input, box, order.TL)) { return; }
 
-        dom.style(pinNode, {
-            position: 'absolute',
-            left: (box.i.left + box.i.width) - box.p.width,
-            top: box.i.top - box.p.height - box.gap
-        });
-        dom.style(popup, {
-            position: 'absolute',
-            left: 0,
-            bottom: 0
-        });
-    }
+            pinNode = pin(popup, box);
 
-    function TC (options, popup, input){
-        var
-            box = size(options, popup, input),
-            pinNode = pin(popup, box.p);
+            dom.style(pinNode, {
+                position: 'absolute',
+                left: box.i.left,
+                top: box.i.top - box.p.height - box.gap
+            });
+            dom.style(popup, {
+                position: 'absolute',
+                left: 0,
+                bottom: 0
+            });
+        },
 
-        dom.style(pinNode, {
-            position: 'absolute',
-            left: (box.i.left + box.i.width/2) - box.p.width/2,
-            top: box.i.top - box.p.height - box.gap
-        });
-        dom.style(popup, {
-            position: 'absolute',
-            left: 0,
-            bottom: 0
-        });
-    }
+        TR: function (options, popup, input, force) {
+            var
+                pinNode,
+                box = force || size(options, popup, input);
+            if (!force && autoPlace(options, popup, input, box, order.TR)) { return; }
+
+            pinNode = pin(popup, box);
+
+            dom.style(pinNode, {
+                position: 'absolute',
+                left: (box.i.left + box.i.width) - box.p.width,
+                top: box.i.top - box.p.height - box.gap
+            });
+            dom.style(popup, {
+                position: 'absolute',
+                left: 0,
+                bottom: 0
+            });
+        },
+
+        TC: function (options, popup, input) {
+            var
+                box = size(options, popup, input),
+                pinNode = pin(popup, box);
+
+            dom.style(pinNode, {
+                position: 'absolute',
+                left: (box.i.left + box.i.width / 2) - box.p.width / 2,
+                top: box.i.top - box.p.height - box.gap
+            });
+            dom.style(popup, {
+                position: 'absolute',
+                left: 0,
+                bottom: 0
+            });
+        }
+    };
 
     plugins = [{
         type: 'position',
         name: 'BL',
-        place: BL
+        place: place.BL
     },{
         type: 'position',
         name: 'BR',
-        place: BR
+        place: place.BR
     },{
         type: 'position',
         name: 'TL',
-        place: TL,
+        place: place.TL,
         onClose: removePin
     },{
         type: 'position',
         name: 'TR',
-        place: TR,
+        place: place.TR,
         onClose: removePin
     },{
         type: 'position',
         name: 'TC',
-        place: TC,
+        place: place.TC,
         onClose: removePin
     },{
         type: 'position',
         name: 'BC',
-        place: BC
+        place: place.BC
     },{
         type: 'position',
         name: 'CL',
-        place: CL
+        place: place.CL
     },{
         type: 'position',
         name: 'CR',
-        place: CR
+        place: place.CR
     }];
 
     plugins.forEach(popup.addPlugin);
