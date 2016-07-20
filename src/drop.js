@@ -1,7 +1,7 @@
 (function () {
 
     var
-        log = 1,
+        log = 0,
         popup = window.popup,
         gap = 5,
         plugin = {
@@ -64,7 +64,7 @@
             position: 'absolute',
             left: box.i.left,
             top: box.i.top - space,
-            height: space - box.gap,
+            height: space - box.gap
         });
         dom.style(popup, {
             position: 'absolute',
@@ -95,6 +95,10 @@
     }
 
     function place (options, popup, input) {
+        // set to abs so popup does not interfere with layout
+        dom.style(popup, {
+            position: 'absolute'
+        });
         var
             box = size(options, popup, input),
             win = dom.box(window),
@@ -114,7 +118,7 @@
 
         if(box.p.height <= botSpace){
             // bottom
-            log && console.log('bottom');
+            log && console.log('bottom', input);
             placeBot(options, popup, input, box, win, botSpace);
         }
         else if(box.p.height <= topSpace){

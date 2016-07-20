@@ -59,7 +59,7 @@
             posPlugin,
             aniPlugin,
             handles = [],
-            log = 0,
+            log = 1,
             controller = dom('div');
 
         controller.on = function (eventName, selector, callback) {
@@ -82,8 +82,9 @@
                 controller.popup = popup;
                 controller.node = node;
                 popup.appendChild(node);
-                handleClose();
             }
+
+            handleClose();
             showing = true;
 
             posPlugin = getPlugin('position', options.position);
@@ -186,7 +187,8 @@
                 console.log('attempt to handleClose after destroy');
                 return;
             }
-            switch (options.closeOn) {
+            var closeOn = options.closeOn || options.openOn === 'click' ? 'clickoff' : false;
+            switch (closeOn) {
                 case 'self': break;
                 case 'clickoff':
                     clickoff(true);
@@ -197,15 +199,25 @@
         function handleClickOff () {
             var offHandles = [];
             function checkClose (e) {
-                log && console.log('check', e.type, e.target, document.activeElement);
+                setTimeout(function(){
+
+
+                log && console.log('check', e.type, document.activeElement);
 
                 var testNode = e.type === 'blur' ? document.activeElement : e.target;
-                //testNode = e.target;
 
                 if(popup.contains(testNode) || (options.input && (options.input.contains(testNode)))){
                     return;
                 }
                 hide();
+                },1)
+            }
+
+            function checkContains (e) {
+                console.log('>>>', popup.contains(e.target), options.input.contains(e.target), e.target);
+                if(!popup.contains(e.target) && !options.input.contains(e.target)){
+                    hide();
+                }
             }
 
             if(!popup){
@@ -213,23 +225,23 @@
                 return;
             }
 
-            log && console.log('clickoff.ready 1');
             offHandles.push(on(popup, 'blur', checkClose));
             if(options.input){
                 offHandles.push(on(options.input, 'blur', checkClose));
             }
 
-            log && console.log('clickoff.ready 4');
-            offHandles.push(on(document.body, 'click', checkClose));
+            //offHandles.push(on(document, 'click', checkContains);
 
             return {
                 remove: function () {
                     offHandles.forEach(function (h) { h.remove(); });
                 },
                 pause: function () {
+                    console.log('PS');
                     offHandles.forEach(function (h) { h.pause(); });
                 },
                 resume: function () {
+                    console.log('RS');
                     offHandles.forEach(function (h) { h.resume(); });
                 }
             };
