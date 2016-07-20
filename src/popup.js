@@ -200,24 +200,14 @@
             var offHandles = [];
             function checkClose (e) {
                 setTimeout(function(){
-
-
-                log && console.log('check', e.type, document.activeElement);
-
-                var testNode = e.type === 'blur' ? document.activeElement : e.target;
-
-                if(popup.contains(testNode) || (options.input && (options.input.contains(testNode)))){
-                    return;
-                }
-                hide();
-                },1)
-            }
-
-            function checkContains (e) {
-                console.log('>>>', popup.contains(e.target), options.input.contains(e.target), e.target);
-                if(!popup.contains(e.target) && !options.input.contains(e.target)){
+                    // timeout allows for activeElement to come into focus after target blur
+                    log && console.log('check', e.type, document.activeElement);
+                    var testNode = document.activeElement;
+                    if(popup.contains(testNode) || (options.input && (options.input.contains(testNode)))){
+                        return;
+                    }
                     hide();
-                }
+                },1)
             }
 
             if(!popup){
@@ -229,8 +219,6 @@
             if(options.input){
                 offHandles.push(on(options.input, 'blur', checkClose));
             }
-
-            //offHandles.push(on(document, 'click', checkContains);
 
             return {
                 remove: function () {

@@ -12,12 +12,17 @@
     <script src="../src/trbl.js"></script>
     <script src="../src/drop.js"></script>
     <style>
-        .red-box{
+        .box{
             border: 1px solid #999;
-            background: red;
             padding: 10px;
             width: 100px;
             height: 100px;
+        }
+        .red{
+            background: #ffa8a0;
+        }
+        .blue{
+            background: #b8c6ff;
         }
         .auto{
             height: auto;
@@ -27,21 +32,40 @@
 <body>
     <h1>Popup demo</h1>
     <button id="b1">drop down</button>
-    <button>do nada</button>
+    <button id="b2">me too</button>
     <script>
         var bigListHtml = '<div>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br></div>';
 
-        var controller = popup({
+        var c1 = popup({
             input: dom.byId('b1'),
             auto: true,
             position: 'drop',
             openOn: 'click',
+            animate: 'wipe',
             closeDelay: 0,
             create: function () {
-                var node = dom('div', {className: 'red-box auto', html: bigListHtml});
+                var node = dom('div', {className: 'box blue auto', html: bigListHtml});
                 on(node, 'click', function () {
                     setTimeout(function () {
-                        controller.close();
+                        c1.close();
+                    }, 500);
+                });
+                return node;
+            }
+        });
+
+        var c2 = popup({
+            input: dom.byId('b2'),
+            auto: true,
+            position: 'drop',
+            openOn: 'click',
+            animate: 'wipe',
+            closeDelay: 0,
+            create: function () {
+                var node = dom('div', {className: 'box red auto', html: bigListHtml});
+                on(node, 'click', function () {
+                    setTimeout(function () {
+                        c2.close();
                     }, 500);
                 });
                 return node;
