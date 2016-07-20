@@ -59,7 +59,7 @@
             posPlugin,
             aniPlugin,
             handles = [],
-            log = 1,
+            log = 0,
             controller = dom('div');
 
         controller.on = function (eventName, selector, callback) {
@@ -78,6 +78,9 @@
             log && console.log('show');
             if(!node){
                 node = options.create();
+                if(!node){
+                    throw new Error('The `popup.create` method must return a node');
+                }
                 popup = dom('div', {className: 'ay-popup', style:{display:'inline-block'}, attr:{tabindex:0}}, document.body);
                 controller.popup = popup;
                 controller.node = node;
@@ -85,27 +88,39 @@
             }
 
             handleClose();
-            showing = true;
+
 
             posPlugin = getPlugin('position', options.position);
             aniPlugin = getPlugin('animate', options.animate);
 
-            if(posPlugin){
-                posPlugin.place(options, popup, options.input);
-            }
+            // set to abs so popup does not interfere with layout
+            // prepare any layout dimensions for plugins to measure
+            dom.style(popup, {
+                position: 'absolute',
+                display: '',
+                height: ''
+            });
 
-            if(!aniPlugin){
-                popup.style.display = '';
-                tick(function () {
-                    log && console.log('fire.open');
-                    on.fire(controller, 'open');
-                });
-            }else{
-                aniPlugin.show(options, popup, options.input, function () {
-                    console.log('done show');
-                    on.fire(controller, 'open');
-                });
-            }
+            tick(function () {
+                if(posPlugin){
+                    posPlugin.place(options, popup, options.input);
+                }
+
+                if(!aniPlugin){
+                    popup.style.display = '';
+                    tick(function () {
+                        log && console.log('fire.open');
+                        showing = true;
+                        on.fire(controller, 'open');
+                    });
+                }else{
+                    aniPlugin.show(options, popup, options.input, function () {
+                        console.log('done show');
+                        showing = true;
+                        on.fire(controller, 'open');
+                    });
+                }
+            });
 
         }
 
@@ -113,7 +128,7 @@
             function close () {
                 log && console.log('hide');
 
-                showing = false;
+
                 function finish () {
                     log && console.log('finish');
                     if(options.destroyOnClose){
@@ -129,6 +144,7 @@
                     }
                     log && console.log('fire.close');
                     tick(function () {
+                        showing = false;
                         on.fire(controller, 'close');
                     });
                 }
@@ -225,11 +241,9 @@
                     offHandles.forEach(function (h) { h.remove(); });
                 },
                 pause: function () {
-                    console.log('PS');
                     offHandles.forEach(function (h) { h.pause(); });
                 },
                 resume: function () {
-                    console.log('RS');
                     offHandles.forEach(function (h) { h.resume(); });
                 }
             };
@@ -253,13 +267,10 @@
             }
         }
 
-
-
         controller.open = show;
         controller.close = hide;
         controller.toggle = noop;
 
-        // cannot overriding component destroy...
         controller.destroy = function () {
             log && console.log('destroy');
             hide();

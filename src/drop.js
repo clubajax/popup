@@ -1,13 +1,14 @@
 (function () {
 
     var
-        log = 0,
+        log = 1,
         popup = window.popup,
         gap = 5,
         plugin = {
             type: 'position',
             name: 'drop',
-            place: place
+            place: place,
+            onClose: removePin
         };
 
     // FIXME: redundant code
@@ -20,7 +21,8 @@
     function removePin (options, popup, input) {
         if(popup && popup.parentNode && popup.parentNode.className === PIN_CLASS){
             var parent = popup.parentNode;
-            parent.removeChild(popup);
+            document.body.appendChild(popup);
+            //parent.removeChild(popup);
             dom.destroy(parent);
         }
     }
@@ -36,6 +38,10 @@
             box.i = dom.box(input);
         }
         return box;
+    }
+
+    function tick (callback) {
+        window.requestAnimationFrame(callback);
     }
 
     var
@@ -95,45 +101,47 @@
     }
 
     function place (options, popup, input) {
-        // set to abs so popup does not interfere with layout
         dom.style(popup, {
-            position: 'absolute'
+            position: 'absolute',
+            display: '',
+            height: ''
         });
-        var
-            box = size(options, popup, input),
-            win = dom.box(window),
-            topSpace = box.i.top - (box.gap * 2),
-            botSpace = win.height - (box.i.top + box.i.height + (box.gap * 2));
+            var
+                box = size(options, popup, input),
+                win = dom.box(window),
+                topSpace = box.i.top - (box.gap * 2),
+                botSpace = win.height - (box.i.top + box.i.height + (box.gap * 2));
 
 
-        log && console.log('topSpace', topSpace, 'botSpace', botSpace, 'box.p.height', box.p.height);
+            log && console.log('topSpace', topSpace, 'botSpace', botSpace, 'box.p.height', box.p.height);
 
-        // force primarily used for testing, but there may be a use case in dev
-        if(options.force === 'up'){
-            return placeTopScroll(options, popup, input, box, win, topSpace);
-        }
-        else if(options.force === 'down'){
-            return placeBotScroll(options, popup, input, box, win, botSpace);
-        }
+            // force primarily used for testing, but there may be a use case in dev
+            if(options.force === 'up'){
+                return placeTopScroll(options, popup, input, box, win, topSpace);
+            }
+            else if(options.force === 'down'){
+                return placeBotScroll(options, popup, input, box, win, botSpace);
+            }
 
-        if(box.p.height <= botSpace){
-            // bottom
-            log && console.log('bottom', input);
-            placeBot(options, popup, input, box, win, botSpace);
-        }
-        else if(box.p.height <= topSpace){
-            // top
-            log && console.log('top');
-            placeTop(options, popup, input, box, win, topSpace);
-        }
-        else if(botSpace <= BOT_MIN || botSpace > topSpace){
-            // bottom, but scrolls
-            placeBotScroll(options, popup, input, box, win, botSpace);
-        }
-        else{
-            // top, but scrolls
-            placeTopScroll(options, popup, input, box, win, topSpace);
-        }
+            if(box.p.height <= botSpace){
+                // bottom
+                log && console.log('bottom', input);
+                placeBot(options, popup, input, box, win, botSpace);
+            }
+            else if(box.p.height <= topSpace){
+                // top
+                log && console.log('top');
+                placeTop(options, popup, input, box, win, topSpace);
+            }
+            else if(botSpace <= BOT_MIN || botSpace > topSpace){
+                // bottom, but scrolls
+                placeBotScroll(options, popup, input, box, win, botSpace);
+            }
+            else{
+                // top, but scrolls
+                placeTopScroll(options, popup, input, box, win, topSpace);
+            }
+
     }
 
     popup.addPlugin(plugin);

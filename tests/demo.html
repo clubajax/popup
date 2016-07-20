@@ -27,6 +27,9 @@
         .auto{
             height: auto;
         }
+        h1{
+            margin-bottom: 300px;
+        }
     </style>
 </head>
 <body>
@@ -41,7 +44,7 @@
             auto: true,
             position: 'drop',
             openOn: 'click',
-            animate: 'wipe',
+            //animate: 'wipe',
             closeDelay: 0,
             create: function () {
                 var node = dom('div', {className: 'box blue auto', html: bigListHtml});
