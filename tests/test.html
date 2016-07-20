@@ -11,6 +11,7 @@
     <script src="../src/fade.js"></script>
     <script src="../src/wipe.js"></script>
     <script src="../src/trbl.js"></script>
+    <script src="../src/drop.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
     <style>
@@ -23,6 +24,12 @@
         }
         .wide{
             width: 300px;
+        }
+        .tall{
+            height: 200px;
+        }
+        .auto{
+            height: auto;
         }
         input{
             font-size: 14px;
@@ -56,11 +63,17 @@
             top: 100px;
             right: 200px;
         }
+        #inp2{
+            position: absolute;
+            bottom: 100px;
+            right: 200px;
+        }
     </style>
 </head>
 <body>
     <h1>popup test</h1>
     <input id="inp1" value="haz popup"/>
+    <input id="inp2" value="iz popupable"/>
     <div id="mocha"></div>
     <script>
 
@@ -75,7 +88,8 @@
                 dom = window.dom,
                 on = window.on,
                 expect = chai.expect,
-                listHtml = '<div>list item A<br>list item B<br>list item C</div>';
+                listHtml = '<div>list item A<br>list item B<br>list item C</div>',
+                bigListHtml = '<div>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br></div>';
 
             function xsuite () {}
             function xtest () {}
@@ -86,13 +100,14 @@
 
             // TODO:
             //  drop-down (top space vs bottom space)
+            //  HANDLE SCROLLED PAGE
             //  scrollable
             //  className options
             //  click to open options
             //  test gap
             //  build step
 
-            suite('popup.destroy', function () {
+            xsuite('popup.destroy', function () {
                 test('it should destroy properly', function () {
                     var
                         popNode,
@@ -114,7 +129,7 @@
 
             });
 
-            suite('popup.show/hide', function () {
+            xsuite('popup.show/hide', function () {
 
 
                 test('it should show and hide and destroy', function () {
@@ -218,7 +233,7 @@
                 });
             });
 
-            suite('popup.clickoff', function () {
+            xsuite('popup.clickoff', function () {
 
                 test('it should open and close by button click', function (done) {
                     var
@@ -324,7 +339,7 @@
                 });
             });
 
-            suite('popup.fade', function () {
+            xsuite('popup.fade', function () {
                 test('it should fade in', function (done) {
                     var
                         popNode,
@@ -352,7 +367,7 @@
                 });
             });
 
-            suite('popup.wipe', function () {
+            xsuite('popup.wipe', function () {
                 test('it should expand and collapse', function (done) {
                     var
                         popNode,
@@ -380,7 +395,7 @@
                 });
             });
 
-            suite('popup.position', function () {
+            xsuite('popup.position', function () {
                 test('it should position BL', function (done) {
                     var
                         input = dom.byId('inp1'),
@@ -615,7 +630,7 @@
                 });
             });
 
-            suite('popup.position.auto', function () {
+            xsuite('popup.position.auto', function () {
                 test('it should position in the BR corner', function (done) {
                     var
                         input = dom('input', {class:'BR'}, document.body),
@@ -716,6 +731,123 @@
                         controller.close();
                         dom.destroy(input);
                         controller.destroy();
+                        done();
+                    });
+                });
+            });
+
+            suite('popup.drop', function () {
+                xtest('it should drop down', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        //done(); return;
+
+                        controller.close();
+                        //dom.destroy(input);
+                        done();
+                    });
+                });
+
+                xtest('it should drop up', function (done) {
+                    var
+                        input = dom.byId('inp2'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        //done(); return;
+
+                        controller.close();
+                        //dom.destroy(input);
+                        done();
+                    });
+                });
+
+                xtest('it should drop down and scroll', function (done) {
+                    var
+                        input = dom.byId('inp2'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            force: 'down',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.height < 200 ).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        //done(); return;
+
+                        controller.close();
+                        done();
+                    });
+                });
+
+                test('it should drop up and scroll', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            force: 'up',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.height < 200 ).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        done(); return;
+
+                        controller.close();
+                        //dom.destroy(input);
                         done();
                     });
                 });
