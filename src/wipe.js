@@ -1,5 +1,15 @@
 (function () {
 
+
+    // Do we need three nodes?
+    // popup
+    //      fixed size
+    // popup-ani
+    //      sized to popup, abs pos for ani up
+    // popup-scroller
+    //      for scrolling the content
+    //
+    //
     window.popup.addPlugin({
         type: 'animate',
         name: 'wipe',
