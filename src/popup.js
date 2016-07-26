@@ -59,7 +59,7 @@
             posPlugin,
             aniPlugin,
             handles = [],
-            log = 0,
+            log = 1,
             controller = dom('div');
 
         controller.on = function (eventName, selector, callback) {
@@ -81,7 +81,7 @@
                 if(!node){
                     throw new Error('The `popup.create` method must return a node');
                 }
-                popup = dom('div', {className: 'ay-popup', style:{display:'inline-block'}, attr:{tabindex:0}}, document.body);
+                popup = dom('div', {className: 'popup', style:{display:'inline-block'}, attr:{tabindex:0}}, document.body);
                 controller.popup = popup;
                 controller.node = node;
                 popup.appendChild(node);
@@ -114,10 +114,19 @@
                         on.fire(controller, 'open');
                     });
                 }else{
+                    var canceled, h = on(document.body, 'click', function () {
+                        // checks if popup was canceled while opening
+                        canceled = 1;
+                    });
                     aniPlugin.show(options, popup, options.input, function () {
                         console.log('done show');
+                        h.remove();
                         showing = true;
-                        on.fire(controller, 'open');
+                        if(canceled){
+                            hide();
+                        }else{
+                            on.fire(controller, 'open');
+                        }
                     });
                 }
             });
@@ -127,8 +136,6 @@
         function hide () {
             function close () {
                 log && console.log('hide');
-
-
                 function finish () {
                     log && console.log('finish');
                     if(options.destroyOnClose){
@@ -148,6 +155,7 @@
                         on.fire(controller, 'close');
                     });
                 }
+
                 var plugin = getPlugin('animate', options.animate);
                 if(!plugin){
                     finish();
@@ -215,11 +223,13 @@
         function handleClickOff () {
             var offHandles = [];
             function checkClose (e) {
+                log && console.log('checkClose');
                 setTimeout(function(){
                     // timeout allows for activeElement to come into focus after target blur
                     log && console.log('check', e.type, document.activeElement);
                     var testNode = document.activeElement;
                     if(popup.contains(testNode) || (options.input && (options.input.contains(testNode)))){
+                        console.log('contains!!!');
                         return;
                     }
                     hide();
@@ -231,6 +241,11 @@
                 return;
             }
 
+            offHandles.push(on(document.body, 'keyup', function (e) {
+                if(e.key === 'Escape'){
+                    hide();
+                }
+            }));
             offHandles.push(on(popup, 'blur', checkClose));
             if(options.input){
                 offHandles.push(on(options.input, 'blur', checkClose));
@@ -259,6 +274,9 @@
                 }else{
                     setTimeout(function () {
                         log && console.log('clickoff.resume');
+                        if(options.input){
+                            options.input.focus();
+                        }
                         clickoffHandle.resume();
                     }, 100);
                 }
