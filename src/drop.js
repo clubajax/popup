@@ -1,9 +1,11 @@
 (function () {
 
     var
-        log = 1,
+        log = 0,
         popup = window.popup,
         gap = 5,
+        PIN_CLASS = 'pin',
+        BOT_MIN = 200,
         plugin = {
             type: 'position',
             name: 'drop',
@@ -44,11 +46,8 @@
         window.requestAnimationFrame(callback);
     }
 
-    var
-        PIN_CLASS = 'pin',
-        BOT_MIN = 200;
-
     function placeTop (options, popup, input, box, win, space) {
+        log && console.log('placeTop');
         var pinNode = pin(popup, box);
 
         dom.style(pinNode, {
@@ -64,24 +63,28 @@
     }
 
     function placeTopScroll (options, popup, input, box, win, space) {
+        log && console.log('placeTopScroll');
         var pinNode = pin(popup, box);
 
         dom.style(pinNode, {
             position: 'absolute',
             left: box.i.left,
             top: box.i.top - space,
-            height: space - box.gap
-        });
-        dom.style(popup, {
-            position: 'absolute',
-            left: 0,
-            bottom: 0,
             height: space - box.gap,
             overflowY: 'scroll'
+        });
+        dom.style(popup, {
+            position: 'relative',
+            top: '',
+            left: '',
+            bottom: '',
+            height: '',
+            overflow: ''
         });
     }
 
     function placeBot (options, popup, input, box, win, space) {
+        log && console.log('placeBot');
         dom.style(popup, {
             position: 'absolute',
             left: box.i.left,
@@ -133,7 +136,7 @@
                 log && console.log('top');
                 placeTop(options, popup, input, box, win, topSpace);
             }
-            else if(botSpace <= BOT_MIN || botSpace > topSpace){
+            else if(botSpace >= BOT_MIN || botSpace > topSpace){
                 // bottom, but scrolls
                 placeBotScroll(options, popup, input, box, win, botSpace);
             }

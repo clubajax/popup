@@ -28,7 +28,7 @@
             height: auto;
         }
         h1{
-            margin-bottom: 300px;
+            margin-bottom: 250px;
         }
     </style>
 </head>
@@ -36,8 +36,26 @@
     <h1>Popup demo</h1>
     <button id="b1">drop down</button>
     <button id="b2">me too</button>
+    <button id="b3">very long</button>
     <script>
+        function createLongList(){
+            var
+                i, ii,
+                code,
+                chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+                pre = 'ABCD'.split(''),
+                items = '';
+
+            for(i = 0; i < pre.length; i++){
+                for(ii = 0; ii < chars.length; ii++){
+                    code = pre[i] + chars[ii];
+                    items += '<li>'+code+'</li>';
+                }
+            }
+            return items;
+        }
         var bigListHtml = '<div>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br></div>';
+        var scrollingList = '<ul>' + createLongList() + '</ul>';
 
         var c1 = popup({
             input: dom.byId('b1'),
@@ -63,12 +81,32 @@
             position: 'drop',
             openOn: 'click',
             animate: 'wipe',
+            speed: 500,
             closeDelay: 0,
             create: function () {
                 var node = dom('div', {className: 'box red auto', html: bigListHtml});
                 on(node, 'click', function () {
                     setTimeout(function () {
                         c2.close();
+                    }, 500);
+                });
+                return node;
+            }
+        });
+
+        var c3 = popup({
+            input: dom.byId('b3'),
+            auto: true,
+            position: 'drop',
+            openOn: 'click',
+            animate: 'wipe',
+            speed: 500,
+            closeDelay: 0,
+            create: function () {
+                var node = dom('div', {className: 'box red auto', html: scrollingList});
+                on(node, 'click', function () {
+                    setTimeout(function () {
+                        c3.close();
                     }, 500);
                 });
                 return node;
