@@ -13,7 +13,7 @@
             onClose: removePin
         };
 
-    // FIXME: redundant code
+    // FIXME: redundant code - make popup.util
     function pin (popup, box){
         var pin = dom('div', {class: PIN_CLASS, style:{height: box.p.height, width:box.p.width}}, document.body);
         pin.appendChild(popup);

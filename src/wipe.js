@@ -6,9 +6,12 @@
     //      fixed size
     // popup-ani
     //      sized to popup, abs pos for ani up
+    //      can be overflow: hidden
     // popup-scroller
     //      for scrolling the content
-    //
+    //      can NOT be overflow: hidden
+    // would this affect the tip/modal popups?
+    // can it be used just for drop.js?
     //
     window.popup.addPlugin({
         type: 'animate',
