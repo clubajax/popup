@@ -1,33 +1,22 @@
 (function () {
 
-
-    // Do we need three nodes?
-    // popup
-    //      fixed size
-    // popup-ani
-    //      sized to popup, abs pos for ani up
-    //      can be overflow: hidden
-    // popup-scroller
-    //      for scrolling the content
-    //      can NOT be overflow: hidden
-    // would this affect the tip/modal popups?
-    // can it be used just for drop.js?
-    //
     window.popup.addPlugin({
         type: 'animate',
         name: 'wipe',
         show: function (options, popup, input, callback) {
-            //console.log('wipe', popup, dom.style(popup, 'height'));
-            fx.height(popup, {
+
+            var node = options.aniNode || popup;
+            console.log('wipe', dom.style(node, 'height'));
+            fx.height(node, {
                 startHeight: 0,
-                height: 'auto',
-                //height: dom.style(popup, 'height') || 'auto',
+                //height: 'auto',
+                height: dom.style(node, 'height') || 'auto',
                 speed: options.speed,
                 callback: callback
             })
         },
         hide: function (options, popup, input, callback) {
-            fx.height(popup, {
+            fx.height(options.aniNode || popup, {
                 height: 0,
                 speed: options.speed,
                 callback: callback

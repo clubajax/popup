@@ -4,7 +4,9 @@
         log = 0,
         popup = window.popup,
         gap = 5,
-        PIN_CLASS = 'pin',
+        POS_CLASS = 'pin',
+        ANI_CLASS = 'ani',
+        SCROLL_CLASS = 'scroller',
         BOT_MIN = 200,
         plugin = {
             type: 'position',
@@ -15,13 +17,13 @@
 
     // FIXME: redundant code - make popup.util
     function pin (popup, box){
-        var pin = dom('div', {class: PIN_CLASS, style:{height: box.p.height, width:box.p.width}}, document.body);
+        var pin = dom('div', {class: POS_CLASS, style:{height: box.p.height, width:box.p.width}}, document.body);
         pin.appendChild(popup);
         return pin
     }
 
     function removePin (options, popup, input) {
-        if(popup && popup.parentNode && popup.parentNode.className === PIN_CLASS){
+        if(popup && popup.parentNode && popup.parentNode.className === POS_CLASS){
             var parent = popup.parentNode;
             document.body.appendChild(popup);
             //parent.removeChild(popup);
@@ -40,6 +42,27 @@
             box.i = dom.box(input);
         }
         return box;
+    }
+
+    // We need three nodes
+    // popup
+    //      fixed size
+    // popup-ani
+    //      sized to popup, abs pos for ani up
+    //      can be overflow: hidden
+    // popup-scroller
+    //      for scrolling the content
+    //      can NOT be overflow: hidden
+    // would this affect the tip/modal popups?
+    // can it be used just for drop.js?
+
+    function wrapNode (options, h, popup) {
+        console.log('wrap: ', h);
+        options.positionNode = dom('div', {class: POS_CLASS, style:{height: h}}, document.body);
+        options.aniNode = dom('div', {class: ANI_CLASS, style:{overflow: 'hidden', height: h}}, options.positionNode);
+        options.scrollNode = dom('div', {class: SCROLL_CLASS, style:{overflow: 'auto', height: h}}, options.aniNode);
+        options.scrollNode.appendChild(popup);
+        popup.style.position = '';
     }
 
     function tick (callback) {
@@ -94,12 +117,15 @@
 
     function placeBotScroll (options, popup, input, box, win, space) {
         log && console.log('placeBotScroll');
-        dom.style(popup, {
+
+        wrapNode(options, space, popup);
+
+        dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
             top: box.i.top + box.i.height + box.gap,
             height: space,
-            overflowY: 'scroll'
+            //overflowY: 'scroll'
         });
     }
 

@@ -116,6 +116,7 @@
                 }else{
                     var canceled, h = on(document.body, 'click', function () {
                         // checks if popup was canceled while opening
+                        // TODO: perhaps close immediately
                         canceled = 1;
                     });
                     aniPlugin.show(options, popup, options.input, function () {
