@@ -4,10 +4,6 @@
 
     var plugins = {};
 
-    function tick (callback) {
-        window.requestAnimationFrame(callback);
-    }
-
     function addPlugin (plugin) {
         plugins[plugin.type] = plugins[plugin.type] || {};
         if(plugins[plugin.type][plugin.name]){
@@ -107,8 +103,6 @@
             }
         }
 
-
-
         controller.open = disPlugin.show;
         controller.close = disPlugin.hide;
         controller.toggle = noop;
@@ -124,7 +118,7 @@
             });
         };
 
-        handleOpen(controller, options);
+        handleOpen();
 
         window.controller = controller;
         return controller;

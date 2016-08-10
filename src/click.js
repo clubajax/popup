@@ -8,11 +8,12 @@
         create: function (options, disPlugin) {
             var
                 clickoffHandle,
+                animating,
                 log = 1;
 
             function handleClose () {
                 if(!options.popup){
-                    console.log('attempt to handleClose after destroy');
+                    console.log('attempt to handleClose after destroy', options);
                     return;
                 }
                 var closeOn = options.closeOn || options.openOn === 'click' ? 'clickoff' : false;
@@ -57,7 +58,6 @@
                             console.log('contains!!!');
                             return;
                         }
-                        console.log('HiDE!');
                         disPlugin.hide();
                     },1)
                 }
@@ -79,12 +79,15 @@
 
                 return {
                     remove: function () {
+                        log && console.log('clickoff.remove');
                         offHandles.forEach(function (h) { h.remove(); });
                     },
                     pause: function () {
+                        log && console.log('clickoff.pause');
                         offHandles.forEach(function (h) { h.pause(); });
                     },
                     resume: function () {
+                        log && console.log('clickoff.resume');
                         offHandles.forEach(function (h) { h.resume(); });
                     }
                 };

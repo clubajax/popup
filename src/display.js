@@ -11,11 +11,12 @@
         create: function (options, posPlugin, aniPlugin, evtPlugin) {
 
             var
-                log = 1,
+                log = 0,
                 animating,
-                popup,
+                pop,
                 node,
                 showing,
+                util = window.popup.util,
                 displayController = {
                     show: show,
                     hide: hide,
@@ -34,33 +35,23 @@
                     if(!node){
                         throw new Error('The `popup.create` method must return a node');
                     }
-                    popup = dom('div', {className: 'popup', style:{display:'inline-block'}, attr:{tabindex:0}}, document.body);
-                    controller.popup = options.popup = popup;
+                    pop = dom('div', {className: 'popup', style:{display:'inline-block'}, attr:{tabindex:0}}, document.body);
+                    controller.popup = options.popup = pop;
                     controller.node = options.node = node;
-                    popup.appendChild(node);
+                    pop.appendChild(node);
                 }
 
                  evtPlugin.onShow();
 
+                util.resetStyle(pop);
 
-                // set to abs so popup does not interfere with layout
-                // prepare any layout dimensions for plugins to measure
-                dom.style(popup, {
-                    position: 'absolute',
-                    display: '',
-                    height: ''
-                });
-
-                console.log('tick', popup);
                 tick(function () {
-                    console.log('tick2', popup);
                     if(posPlugin){
-                        console.log('popup.place', dom.style(popup, 'height'));
-                        posPlugin.place(options, popup, options.input);
+                        posPlugin.place(options, pop, options.input);
                     }
 
                     if(!aniPlugin){
-                        popup.style.display = '';
+                        pop.style.display = '';
                         tick(function () {
                             log && console.log('fire.open');
                             showing = true;
@@ -68,15 +59,14 @@
                         });
                     }else{
                         var canceled, h = on(document.body, 'click', function () {
-                            // checks if popup was canceled while opening
+                            // checks if pop was canceled while opening
                             // TODO: perhaps close immediately
                             console.log('CANCELED - animating:', animating);
                             canceled = 1;
                         });
                         animating = true;
-                        console.log('animate');
-                        aniPlugin.show(options, popup, options.input, function () {
-                            console.log('done show');
+                        aniPlugin.show(options, pop, options.input, function () {
+                            log && console.log('done show');
                             animating = false;
                             h.remove();
                             showing = true;
@@ -98,14 +88,14 @@
                         log && console.log('finish');
                         if(options.destroyOnClose){
                             destroy();
-                        }else if(popup){ // may be destroyed
-                            popup.style.display = 'none';
+                        }else if(pop){ // may be destroyed
+                            pop.style.display = 'none';
                         }
                         if(posPlugin && posPlugin.onClose){
-                            posPlugin.onClose(options, popup, options.input);
+                            posPlugin.onClose(options, pop, options.input);
                         }
                         if(aniPlugin && aniPlugin.onClose){
-                            aniPlugin.onClose(options, popup, options.input);
+                            aniPlugin.onClose(options, pop, options.input);
                         }
                         log && console.log('fire.close');
                         tick(function () {
@@ -118,7 +108,7 @@
                         finish();
                     }else{
                         animating = true;
-                        aniPlugin.hide(options, popup, options.input, finish);
+                        aniPlugin.hide(options, pop, options.input, finish);
                     }
                 }
 

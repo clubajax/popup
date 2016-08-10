@@ -7,12 +7,14 @@
     <script src="../bower_components/on/src/on.js"></script>
     <script src="../bower_components/fx/src/fx.js"></script>
     <script src="../src/popup.js"></script>
+    <script src="../src/util.js"></script>
     <script src="../src/fade.js"></script>
     <script src="../src/wipe.js"></script>
     <script src="../src/trbl.js"></script>
     <script src="../src/drop.js"></script>
     <script src="../src/display.js"></script>
     <script src="../src/click.js"></script>
+
     <style>
         .box{
             border: 1px solid #999;
@@ -32,6 +34,17 @@
         h1{
             margin-bottom: 250px;
         }
+        #r{
+            border: 1px solid #999;
+            padding: 10px;
+            width: 100px;
+            height: 100px;
+            background: #ffa8a0;
+            transition: height 1000ms;
+        }
+        #r:hover{
+            height: 600px;
+        }
     </style>
 </head>
 <body>
@@ -39,6 +52,7 @@
     <button id="b1">drop down</button>
     <button id="b2">me too</button>
     <button id="b3">very long</button>
+    <!--<div id="r"></div>-->
     <script>
         function createLongList(){
             var
@@ -109,7 +123,7 @@
                 on(node, 'click', function () {
                     setTimeout(function () {
                         c3.close();
-                    }, 500);
+                    }, 800);
                 });
                 return node;
             }
