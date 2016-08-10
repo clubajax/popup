@@ -17,6 +17,7 @@
     }
 
     function popup (options) {
+        // TODO: handle hover?
         // options:
         //  create: function that lazily creates popup (must return one node)
         //  input: button or input that opens popup
@@ -60,6 +61,7 @@
             aniPlugin,
             handles = [],
             log = 1,
+            animating,
             controller = dom('div');
 
         controller.on = function (eventName, selector, callback) {
@@ -118,11 +120,14 @@
                     var canceled, h = on(document.body, 'click', function () {
                         // checks if popup was canceled while opening
                         // TODO: perhaps close immediately
+                        console.log('CANCELED - animating:', animating);
                         canceled = 1;
                     });
+                    animating = true;
                     console.log('animate');
                     aniPlugin.show(options, popup, options.input, function () {
                         console.log('done show');
+                        animating = false;
                         h.remove();
                         showing = true;
                         if(canceled){
@@ -140,6 +145,7 @@
             function close () {
                 log && console.log('hide');
                 function finish () {
+                    animating = false;
                     log && console.log('finish');
                     if(options.destroyOnClose){
                         destroy();
@@ -163,11 +169,18 @@
                 if(!plugin){
                     finish();
                 }else{
+                    animating = true;
                     plugin.hide(options, popup, options.input, finish);
                 }
             }
 
-            if(showing === false){ return; }
+            if(showing === false && !animating){
+                log && console.log('hide - not showing - animating', animating);
+                return;
+            }else if(showing === false){
+                console.log('reverse animation');
+            }
+
             if(node){
                 log && console.log('check.hide');
                 if(options.closeDelay){
@@ -235,6 +248,7 @@
                         console.log('contains!!!');
                         return;
                     }
+                    console.log('HiDE!');
                     hide();
                 },1)
             }
