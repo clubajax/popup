@@ -23,12 +23,20 @@
     }
 
     function removePin (options, popup, input) {
-        if(popup && popup.parentNode && popup.parentNode.className === POS_CLASS){
+        if(options.popup){
+            options.popup.parentNode.removeChild(options.popup);
+            dom.destroy(options.positionNode);
+        }else if(popup && popup.parentNode && popup.parentNode.className === POS_CLASS){
             var parent = popup.parentNode;
             document.body.appendChild(popup);
             //parent.removeChild(popup);
             dom.destroy(parent);
         }
+
+        delete options.positionNode;
+        delete options.aniNode;
+        delete options.scrollNode;
+        delete options.popup;
     }
 
     function size (options, popup, input) {
@@ -36,7 +44,14 @@
             gap: options.gap || gap
         };
         if(popup){
-            box.p = dom.box(popup);
+            console.log('get size:::', popup.parentNode);
+            if(!popup.parentNode){
+                document.body.appendChild(popup);
+                box.p = dom.box(popup);
+                document.body.removeChild(popup);
+            }else{
+                box.p = dom.box(popup);
+            }
         }
         if(input){
             box.i = dom.box(input);
@@ -62,6 +77,7 @@
         options.aniNode = dom('div', {class: ANI_CLASS, style:{overflow: 'hidden', height: h}}, options.positionNode);
         options.scrollNode = dom('div', {class: SCROLL_CLASS, style:{overflow: 'auto', height: h}}, options.aniNode);
         options.scrollNode.appendChild(popup);
+        options.popup = popup;
         popup.style.position = '';
     }
 
@@ -87,22 +103,18 @@
 
     function placeTopScroll (options, popup, input, box, win, space) {
         log && console.log('placeTopScroll');
-        var pinNode = pin(popup, box);
 
-        dom.style(pinNode, {
+        wrapNode(options, space, popup);
+
+        dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
-            top: box.i.top - space,
-            height: space - box.gap,
-            overflowY: 'scroll'
+            top: box.i.top - space
         });
-        dom.style(popup, {
-            position: 'relative',
-            top: '',
-            left: '',
-            bottom: '',
-            height: '',
-            overflow: ''
+
+        dom.style(options.aniNode, {
+            position: 'absolute',
+            bottom: 0
         });
     }
 
@@ -123,9 +135,7 @@
         dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
-            top: box.i.top + box.i.height + box.gap,
-            height: space,
-            //overflowY: 'scroll'
+            top: box.i.top + box.i.height + box.gap
         });
     }
 

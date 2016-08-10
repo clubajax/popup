@@ -103,6 +103,7 @@
 
             tick(function () {
                 if(posPlugin){
+                    console.log('popup.place', dom.style(popup, 'height'));
                     posPlugin.place(options, popup, options.input);
                 }
 
@@ -119,6 +120,7 @@
                         // TODO: perhaps close immediately
                         canceled = 1;
                     });
+                    console.log('animate');
                     aniPlugin.show(options, popup, options.input, function () {
                         console.log('done show');
                         h.remove();
