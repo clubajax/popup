@@ -12,6 +12,7 @@
     <script src="../src/wipe.js"></script>
     <script src="../src/trbl.js"></script>
     <script src="../src/drop.js"></script>
+    <script src="../src/display.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.5.3/mocha.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.5.0/chai.min.js"></script>
     <style>
@@ -107,7 +108,7 @@
             //  test gap
             //  build step
 
-            xsuite('popup.destroy', function () {
+            suite('popup.destroy', function () {
                 test('it should destroy properly', function () {
                     var
                         popNode,
@@ -129,7 +130,7 @@
 
             });
 
-            xsuite('popup.show/hide', function () {
+            suite('popup.show/hide', function () {
 
 
                 test('it should show and hide and destroy', function () {
@@ -143,6 +144,7 @@
                         });
 
                     popNode = dom.byId('a');
+                    console.log(' ------------- popNode', popNode);
                     expect(dom.isNode(popNode)).to.equal(true);
 
                     controller.close();
@@ -160,7 +162,7 @@
                     controller.destroy();
                 });
 
-                test('it should emit `open` and `close` events', function (done) {
+                xtest('it should emit `open` and `close` events', function (done) {
                     var
                         opened = false,
                         closed = false,
@@ -189,7 +191,7 @@
                     },100);
                 });
 
-                test('it should show and hide without destroy', function () {
+                xtest('it should show and hide without destroy', function () {
                     var
                         controller = popup({
                             destroyOnClose: false,
@@ -213,7 +215,7 @@
 
                 });
 
-                test('it should not open after destroyed', function () {
+                xtest('it should not open after destroyed', function () {
                     var
                         controller = popup({
                             destroyOnClose: false,
@@ -736,7 +738,7 @@
                 });
             });
 
-            suite('popup.drop', function () {
+            xsuite('popup.drop', function () {
                 xtest('it should drop down', function (done) {
                     var
                         input = dom.byId('inp1'),
@@ -822,7 +824,7 @@
                     });
                 });
 
-                test('it should drop up and scroll', function (done) {
+                xtest('it should drop up and scroll (broken test)', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
