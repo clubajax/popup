@@ -69,7 +69,7 @@
 
                 offHandles.push(on(document.body, 'keyup', function (e) {
                     if(e.key === 'Escape'){
-                        hide();
+                        disPlugin.hide();
                     }
                 }));
                 offHandles.push(on(options.popup, 'blur', checkClose));

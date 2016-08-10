@@ -6,7 +6,6 @@
         show: function (options, popup, input, callback) {
 
             var node = options.aniNode || popup;
-            console.log('wipe', dom.style(node, 'height'), node);
             fx.height(node, {
                 startHeight: 0,
                 //height: 'auto',

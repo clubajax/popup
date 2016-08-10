@@ -57,6 +57,7 @@
 
     function createController (options) {
         var
+            log = 0,
             node,
             popup,
             posPlugin = getPlugin('position', options.position),
@@ -64,12 +65,7 @@
             evtPlugin = getPlugin('event', options.event || 'click'),
             disPlugin = getPlugin('display', options.display || 'default').create(options, posPlugin, aniPlugin, evtPlugin),
             handles = [],
-            log = 1,
             controller = dom('div');
-
-
-
-        console.log('disPlugin', disPlugin);
 
         controller.on = function (eventName, selector, callback) {
             var handle = on(controller, eventName, selector, callback);

@@ -44,7 +44,6 @@
             gap: options.gap || gap
         };
         if(popup){
-            console.log('get size:::', popup.parentNode);
             if(!popup.parentNode){
                 document.body.appendChild(popup);
                 box.p = dom.box(popup);
@@ -72,7 +71,6 @@
     // can it be used just for drop.js?
 
     function wrapNode (options, h, popup) {
-        console.log('wrap: ', h);
         options.positionNode = dom('div', {class: POS_CLASS, style:{height: h}}, document.body);
         options.aniNode = dom('div', {class: ANI_CLASS, style:{overflow: 'hidden', height: h}}, options.positionNode);
         options.scrollNode = dom('div', {class: SCROLL_CLASS, style:{overflow: 'auto', height: h}}, options.aniNode);
