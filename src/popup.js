@@ -59,11 +59,10 @@
         var
             node,
             popup,
-
-            clickoffHandle,
             posPlugin = getPlugin('position', options.position),
             aniPlugin = getPlugin('animate', options.animate),
-            disPlugin = getPlugin('display', options.display || 'default').create(options, posPlugin, aniPlugin),
+            evtPlugin = getPlugin('event', options.event || 'click'),
+            disPlugin = getPlugin('display', options.display || 'default').create(options, posPlugin, aniPlugin, evtPlugin),
             handles = [],
             log = 1,
             controller = dom('div');
