@@ -8,7 +8,7 @@
     window.popup.addPlugin({
         type: 'display',
         name: 'default',
-        create: function (options, posPlugin, aniPlugin, evtPlugin) {
+        create: function (options, controller, posPlugin, aniPlugin, evtPlugin) {
 
             var
                 log = 0,
@@ -22,6 +22,7 @@
                     hide: hide,
                     destroy: function () {
                         evtPlugin.destroy();
+                        dom.destroy(node);
                     }
                 };
 
@@ -87,7 +88,7 @@
                         animating = false;
                         log && console.log('finish');
                         if(options.destroyOnClose){
-                            destroy();
+                            displayController.destroy();
                         }else if(pop){ // may be destroyed
                             pop.style.display = 'none';
                         }

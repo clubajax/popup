@@ -8,8 +8,7 @@
         create: function (options, disPlugin) {
             var
                 clickoffHandle,
-                animating,
-                log = 1;
+                log = 0;
 
             function handleClose () {
                 if(!options.popup){
@@ -55,7 +54,7 @@
                         log && console.log('check', e.type, document.activeElement);
                         var testNode = document.activeElement;
                         if(options.popup.contains(testNode) || (options.input && (options.input.contains(testNode)))){
-                            console.log('contains!!!');
+                            log && console.log('clicked on popup or input');
                             return;
                         }
                         disPlugin.hide();
@@ -103,7 +102,6 @@
                 destroy: function () {
                     if(clickoffHandle){
                         clickoffHandle.remove();
-                        clickoffHandle = null;
                     }
                 }
             }

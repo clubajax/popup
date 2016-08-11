@@ -34,6 +34,9 @@
         h1{
             margin-bottom: 250px;
         }
+        .page-scroll{
+            height: 1000px;
+        }
         #r{
             border: 1px solid #999;
             padding: 10px;
@@ -123,11 +126,12 @@
                 on(node, 'click', function () {
                     setTimeout(function () {
                         c3.close();
-                    }, 800);
+                    }, 1500);
                 });
                 return node;
             }
         });
     </script>
+    <div class="page-scroll"></div>
 </body>
 </html>

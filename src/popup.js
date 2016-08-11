@@ -56,12 +56,12 @@
             log = 0,
             node,
             popup,
+            handles = [],
+            controller = dom('div'),
             posPlugin = getPlugin('position', options.position),
             aniPlugin = getPlugin('animate', options.animate),
             evtPlugin = getPlugin('event', options.event || 'click'),
-            disPlugin = getPlugin('display', options.display || 'default').create(options, posPlugin, aniPlugin, evtPlugin),
-            handles = [],
-            controller = dom('div');
+            disPlugin = getPlugin('display', options.display || 'default').create(options, controller, posPlugin, aniPlugin, evtPlugin);
 
         controller.on = function (eventName, selector, callback) {
             var handle = on(controller, eventName, selector, callback);
@@ -90,7 +90,6 @@
                 if(options.openOn === 'click'){
                     handles.push(on(options.input, 'click', disPlugin.show));
                 }else{
-                    console.log('*no openOn');
                     disPlugin.show();
                 }
             }

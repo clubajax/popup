@@ -30,13 +30,10 @@
         },
 
         unwrap: function (options, popup, input) {
-            if(options.popup){
-                options.popup.parentNode.removeChild(options.popup);
-                dom.destroy(options.positionNode);
-            }else if(popup && popup.parentNode && popup.parentNode.className === POS_CLASS){
+            popup = popup || options.popup;
+            if(popup && popup.parentNode && popup.parentNode.className === POS_CLASS){
                 var parent = popup.parentNode;
                 document.body.appendChild(popup);
-                //parent.removeChild(popup);
                 dom.destroy(parent);
             }
 

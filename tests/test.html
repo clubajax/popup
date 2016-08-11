@@ -8,6 +8,7 @@
     <script src="../bower_components/on/src/on.js"></script>
     <script src="../bower_components/fx/src/fx.js"></script>
     <script src="../src/popup.js"></script>
+    <script src="../src/util.js"></script>
     <script src="../src/fade.js"></script>
     <script src="../src/wipe.js"></script>
     <script src="../src/trbl.js"></script>
@@ -100,6 +101,16 @@
                 return !!n && !!dom.isNode(n) && !!n.parentNode;
             }
 
+            function click (node) {
+                node.focus();
+                on.emit(node, 'click');
+            }
+            function unclick (node) {
+                node.blur();
+                document.body.focus();
+                on.emit(document.body, 'click');
+            }
+
             // TODO:
             //  drop-down (top space vs bottom space)
             //  HANDLE SCROLLED PAGE
@@ -108,6 +119,8 @@
             //  click to open options
             //  test gap
             //  build step
+
+
 
             suite('popup.destroy', function () {
                 test('it should destroy properly', function () {
@@ -145,7 +158,6 @@
                         });
 
                     popNode = dom.byId('a');
-                    console.log(' ------------- popNode', popNode);
                     expect(dom.isNode(popNode)).to.equal(true);
 
                     controller.close();
@@ -154,7 +166,7 @@
 
                     controller.open();
                     popNode = dom.byId('a');
-                    expect(dom.isNode(popNode)).to.equal(true);
+                    expect(dom.isNode(popNode)).to.equal(false);
 
                     controller.close();
                     popNode = dom.byId('a');
@@ -163,7 +175,7 @@
                     controller.destroy();
                 });
 
-                xtest('it should emit `open` and `close` events', function (done) {
+                test('it should emit `open` and `close` events', function (done) {
                     var
                         opened = false,
                         closed = false,
@@ -192,7 +204,7 @@
                     },100);
                 });
 
-                xtest('it should show and hide without destroy', function () {
+                test('it should show and hide without destroy', function () {
                     var
                         controller = popup({
                             destroyOnClose: false,
@@ -216,7 +228,7 @@
 
                 });
 
-                xtest('it should not open after destroyed', function () {
+                test('it should not open after destroyed', function () {
                     var
                         controller = popup({
                             destroyOnClose: false,
@@ -236,8 +248,10 @@
                 });
             });
 
-            xsuite('popup.clickoff', function () {
-
+            suite('popup.clickoff', function () {
+                if(!document.hasFocus()){
+                    alert('Click tests need to run with the window in focus.');
+                }
                 test('it should open and close by button click', function (done) {
                     var
                         popNode,
@@ -253,12 +267,14 @@
                             }
                         });
 
-                    on.emit(button, 'click');
+
+                    click(button);
                     expect(exists('a')).to.equal(true);
 
                     setTimeout(function () {
-                        on.emit(document.body, 'click');
+                        unclick(button);
                         setTimeout(function () {
+                            console.log('time');
                             popNode = dom.byId('a');
                             expect(dom.isNode(popNode)).to.equal(false);
                             controller.destroy();
@@ -282,12 +298,12 @@
                             }
                         });
 
-                    on.emit(button, 'click');
+                    click(button);
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(true);
 
                     setTimeout(function () {
-                        on.emit(document.body, 'click');
+                        unclick(button);
                         setTimeout(function () {
                             popNode = dom.byId('a');
                             expect(dom.isNode(popNode)).to.equal(false);
@@ -319,14 +335,13 @@
                             }
                         });
 
-                    on.emit(button, 'click');
+                    click(button);
                     popNode = dom.byId('a');
                     expect(dom.isNode(popNode)).to.equal(true);
 
                     setTimeout(function () {
 
-                        on.emit(button, 'click'); // ???
-                        on.emit(document.body, 'click');
+                        unclick(button);
                         setTimeout(function () {
                             popNode = dom.byId('a');
                             expect(dom.isNode(popNode)).to.equal(true);
@@ -342,7 +357,7 @@
                 });
             });
 
-            xsuite('popup.fade', function () {
+            suite('popup.fade', function () {
                 test('it should fade in', function (done) {
                     var
                         popNode,
@@ -370,7 +385,7 @@
                 });
             });
 
-            xsuite('popup.wipe', function () {
+            suite('popup.wipe', function () {
                 test('it should expand and collapse', function (done) {
                     var
                         popNode,
@@ -398,7 +413,7 @@
                 });
             });
 
-            xsuite('popup.position', function () {
+            suite('popup.position', function () {
                 test('it should position BL', function (done) {
                     var
                         input = dom.byId('inp1'),
@@ -633,7 +648,7 @@
                 });
             });
 
-            xsuite('popup.position.auto', function () {
+            suite('popup.position.auto', function () {
                 test('it should position in the BR corner', function (done) {
                     var
                         input = dom('input', {class:'BR'}, document.body),
@@ -739,8 +754,8 @@
                 });
             });
 
-            xsuite('popup.drop', function () {
-                xtest('it should drop down', function (done) {
+            suite('popup.drop', function () {
+                test('it should drop down', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -768,7 +783,7 @@
                     });
                 });
 
-                xtest('it should drop up', function (done) {
+                test('it should drop up', function (done) {
                     var
                         input = dom.byId('inp2'),
                         controller = popup({
@@ -796,7 +811,7 @@
                     });
                 });
 
-                xtest('it should drop down and scroll', function (done) {
+                test('it should drop down and scroll', function (done) {
                     var
                         input = dom.byId('inp2'),
                         controller = popup({
@@ -815,17 +830,14 @@
                             pbox = dom.box(controller.popup);
 
                         expect(pbox.top > ibox.top).to.equal(true);
-                        expect(pbox.height < 200 ).to.equal(true);
                         expect(pbox.left <= ibox.left).to.equal(true);
-
-                        //done(); return;
 
                         controller.close();
                         done();
                     });
                 });
 
-                xtest('it should drop up and scroll (broken test)', function (done) {
+                test('it should drop up and scroll (broken test)', function (done) {
                     var
                         input = dom.byId('inp1'),
                         controller = popup({
@@ -844,13 +856,9 @@
                             pbox = dom.box(controller.popup);
 
                         expect(pbox.top < ibox.top).to.equal(true);
-                        expect(pbox.height < 200 ).to.equal(true);
                         expect(pbox.left <= ibox.left).to.equal(true);
 
-                        done(); return;
-
-                        controller.close();
-                        //dom.destroy(input);
+                        controller.destroy();
                         done();
                     });
                 });
