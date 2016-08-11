@@ -1,7 +1,7 @@
 (function () {
 
     var
-        log = 0,
+        log = 1,
         popup = window.popup,
         util = popup.util,
         BOT_MIN = 200,
@@ -22,7 +22,7 @@
         dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
-            top: box.i.top - box.p.height - box.gap
+            top: box.i.y - box.p.height - box.gap
         });
         dom.style(options.aniNode, {
             position: 'absolute',
@@ -39,7 +39,7 @@
         dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
-            top: box.i.top - space
+            top: box.i.y - space
         });
 
         dom.style(options.aniNode, {
@@ -55,18 +55,18 @@
         dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
-            top: box.i.top + box.i.height + box.gap
+            top: box.i.y + box.i.height + box.gap
         });
     }
 
     function placeBotScroll (options, pop, input, box, win, space) {
-        log && console.log('placeBotScroll');
+        log && console.log('placeBotScroll', box.i.y);
 
         util.wrap(options, space, pop);
         dom.style(options.positionNode, {
             position: 'absolute',
             left: box.i.left,
-            top: box.i.top + box.i.height + box.gap
+            top: box.i.y + box.i.height + box.gap
         });
     }
 
@@ -79,8 +79,8 @@
             botSpace = win.height - (box.i.top + box.i.height + (box.gap * 2));
 
 
-        log && console.log('topSpace', topSpace, 'botSpace', botSpace, 'box.p.height', box.p.height);
-
+        //log && console.log('topSpace', topSpace, 'botSpace', botSpace, 'box', box);
+        log && console.log('popheight', box.p.height);
         // force primarily used for testing, but there may be a use case in dev
         if(options.force === 'up'){
             return placeTopScroll(options, pop, input, box, win, topSpace);

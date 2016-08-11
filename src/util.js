@@ -43,17 +43,28 @@
             //delete options.popup;
         },
 
+        // TODO: Move measurements to dom
+        //
         size: function (options, popup, input) {
-            var box = {
-                gap: options.gap || defaultGap
-            };
+            var
+                parent,
+                box = {
+                    gap: options.gap || defaultGap
+                };
             if(popup){
+                dom.style(popup, {
+                    display: '',
+                    height: ''
+                });
                 if(!popup.parentNode){
                     document.body.appendChild(popup);
                     box.p = dom.box(popup);
                     document.body.removeChild(popup);
                 }else{
+                    parent = popup.parentNode;
+                    document.body.appendChild(popup);
                     box.p = dom.box(popup);
+                    parent.appendChild(popup);
                 }
             }
             if(input){

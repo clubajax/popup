@@ -11,7 +11,7 @@
         create: function (options, controller, posPlugin, aniPlugin, evtPlugin) {
 
             var
-                log = 0,
+                log = 1,
                 animating,
                 pop,
                 node,
@@ -62,8 +62,8 @@
                         var canceled, h = on(document.body, 'click', function () {
                             // checks if pop was canceled while opening
                             // TODO: perhaps close immediately
-                            console.log('CANCELED - animating:', animating);
-                            canceled = 1;
+                            //console.log('CANCELED - animating:', animating);
+                            //canceled = 1;
                         });
                         animating = true;
                         aniPlugin.show(options, pop, options.input, function () {

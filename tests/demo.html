@@ -32,7 +32,7 @@
             height: auto;
         }
         h1{
-            margin-bottom: 250px;
+            margin-bottom: 550px;
         }
         .page-scroll{
             height: 1000px;
@@ -55,7 +55,7 @@
     <button id="b1">drop down</button>
     <button id="b2">me too</button>
     <button id="b3">very long</button>
-    <!--<div id="r"></div>-->
+    <div id="r"></div>
     <script>
         function createLongList(){
             var
@@ -119,14 +119,14 @@
             position: 'drop',
             openOn: 'click',
             animate: 'wipe',
-            speed: 500,
+            speed: 2500,
             closeDelay: 0,
             create: function () {
                 var node = dom('div', {className: 'box red auto', html: scrollingList});
                 on(node, 'click', function () {
                     setTimeout(function () {
                         c3.close();
-                    }, 1500);
+                    }, 500);
                 });
                 return node;
             }
