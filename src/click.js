@@ -7,6 +7,7 @@
         name: 'click',
         create: function (options, disPlugin) {
             var
+                clickHandle,
                 clickoffHandle,
                 log = 0;
 
@@ -92,6 +93,11 @@
                 };
             }
 
+            if(options.input){
+                clickHandle = on(options.input, 'click', disPlugin.show);
+            }else {
+                console.error('The click event must have an input');
+            }
             return {
                 onShow: function () {
                     handleClose();
@@ -100,9 +106,8 @@
                     clickoff(false);
                 },
                 destroy: function () {
-                    if(clickoffHandle){
-                        clickoffHandle.remove();
-                    }
+                    if(clickoffHandle){ clickoffHandle.remove(); }
+                    if(clickHandle){ clickHandle.remove(); }
                 }
             }
         }

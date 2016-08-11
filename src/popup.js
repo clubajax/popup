@@ -52,6 +52,11 @@
     window.popup = popup;
 
     function createController (options) {
+
+        if(!options.openOn){
+            options.openOn = 'default';
+        }
+
         var
             log = 0,
             node,
@@ -86,19 +91,9 @@
         }
 
         function handleOpen () {
-            if(options.input){
-                if(options.openOn === 'click'){
-                    handles.push(on(options.input, 'click', disPlugin.show));
-                }else{
-                    disPlugin.show();
-                }
-            }
-            else{
-                // no input
-                if(options.openOn !== 'self'){
-                    // just open it
-                    disPlugin.show();
-                }
+            if(options.openOn === 'default'){
+                // just open it
+                disPlugin.show();
             }
         }
 
