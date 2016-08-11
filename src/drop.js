@@ -1,7 +1,7 @@
 (function () {
 
     var
-        log = 1,
+        log = 0,
         popup = window.popup,
         util = popup.util,
         BOT_MIN = 200,
@@ -15,16 +15,6 @@
         };
 
     function placeTop (options, pop, input, box, win, space) {
-
-
-
-
-        // FIXME - why is the height of the container wrong?
-
-
-
-
-
 
         log && console.log('placeTop');
 

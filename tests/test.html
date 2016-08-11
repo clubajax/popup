@@ -258,6 +258,7 @@
                         time = 100,
                         button = dom('button', {html: 'open'}, document.body),
                         controller = popup({
+                            event: 'click',
                             input: button,
                             openOn: 'click',
                             closeOn: 'clickoff',
@@ -269,12 +270,12 @@
 
 
                     click(button);
+
                     expect(exists('a')).to.equal(true);
 
                     setTimeout(function () {
                         unclick(button);
                         setTimeout(function () {
-                            console.log('time');
                             popNode = dom.byId('a');
                             expect(dom.isNode(popNode)).to.equal(false);
                             controller.destroy();
@@ -289,6 +290,7 @@
                         time = 100,
                         button = dom('button', {html: 'open'}, document.body),
                         controller = popup({
+                            event: 'click',
                             input: button,
                             openOn: 'click',
                             closeOn: 'clickoff',
@@ -326,6 +328,7 @@
                         button = dom('button', {html: 'open'}, document.body),
                         controller = popup({
                             input: button,
+                            event: 'click',
                             openOn: 'click',
                             closeOn: 'clickoff',
                             destroyOnClose: true,
@@ -354,6 +357,113 @@
                         },300);
                     },100);
 
+                });
+            });
+
+            suite('popup.drop', function () {
+                test('it should drop down', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        controller.close();
+                        done();
+                    });
+                });
+
+                test('it should drop up', function (done) {
+                    var
+                        input = dom.byId('inp2'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        //done(); return;
+
+                        controller.close();
+                        //dom.destroy(input);
+                        done();
+                    });
+                });
+
+                test('it should drop down and scroll', function (done) {
+                    var
+                        input = dom.byId('inp2'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            force: 'down',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top > ibox.top).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        controller.close();
+                        done();
+                    });
+                });
+
+                test('it should drop up and scroll (broken test)', function (done) {
+                    var
+                        input = dom.byId('inp1'),
+                        controller = popup({
+                            input: input,
+                            auto: true,
+                            position: 'drop',
+                            force: 'up',
+                            closeDelay: closeDelay,
+                            create: function () {
+                                return dom('div', {className: 'red-box auto', html: bigListHtml});
+                            }
+                        });
+
+                    controller.on('open', function () {
+                        var ibox = dom.box(input),
+                            pbox = dom.box(controller.popup);
+
+                        expect(pbox.top < ibox.top).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
+
+                        controller.destroy();
+                        done();
+                    });
                 });
             });
 
@@ -454,7 +564,7 @@
                             speed: 200,
                             position: 'TL',
                             create: function () {
-                                return dom('div', {className: 'red-box', html: listHtml});
+                                return dom('div', {className: 'red-box one', html: listHtml});
                             }
                         });
 
@@ -485,7 +595,7 @@
                             position: 'TR',
                             closeDelay: closeDelay,
                             create: function () {
-                                return dom('div', {className: 'red-box wide', html: listHtml});
+                                return dom('div', {className: 'red-box wide two', html: listHtml});
                             }
                         });
 
@@ -701,9 +811,10 @@
                     });
                 });
 
-                test('it should position in the TL corner', function (done) {
+                test('it should position in the TR corner [BROKEN]', function (done) {
+                    // FIXME - when run with all tests, the popup is too big and the TRBL fails
                     var
-                        input = dom('input', {class:'TL'}, document.body),
+                        input = dom('input', {class:'TR'}, document.body),
                         controller = popup({
                             input: input,
                             auto: true,
@@ -719,7 +830,7 @@
                             pbox = dom.box(controller.popup);
 
                         expect(pbox.top > ibox.top).to.equal(true);
-                        expect(pbox.left >= ibox.left).to.equal(true);
+                        expect(pbox.left <= ibox.left).to.equal(true);
                         controller.close();
                         dom.destroy(input);
                         controller.destroy();
@@ -727,9 +838,9 @@
                     });
                 });
 
-                test('it should position in the TR corner', function (done) {
+                test('it should position in the TL corner', function (done) {
                     var
-                        input = dom('input', {class:'TR'}, document.body),
+                        input = dom('input', {class:'TL'}, document.body),
                         controller = popup({
                             input: input,
                             auto: true,
@@ -743,9 +854,8 @@
                     controller.on('open', function () {
                         var ibox = dom.box(input),
                             pbox = dom.box(controller.popup);
-
                         expect(pbox.top > ibox.top).to.equal(true);
-                        expect(pbox.left < ibox.left).to.equal(true);
+                        expect(pbox.left >= ibox.left).to.equal(true);
                         controller.close();
                         dom.destroy(input);
                         controller.destroy();
@@ -754,115 +864,6 @@
                 });
             });
 
-            suite('popup.drop', function () {
-                test('it should drop down', function (done) {
-                    var
-                        input = dom.byId('inp1'),
-                        controller = popup({
-                            input: input,
-                            auto: true,
-                            position: 'drop',
-                            closeDelay: closeDelay,
-                            create: function () {
-                                return dom('div', {className: 'red-box auto', html: bigListHtml});
-                            }
-                        });
-
-                    controller.on('open', function () {
-                        var ibox = dom.box(input),
-                            pbox = dom.box(controller.popup);
-
-                        expect(pbox.top > ibox.top).to.equal(true);
-                        expect(pbox.left <= ibox.left).to.equal(true);
-
-                        //done(); return;
-
-                        controller.close();
-                        //dom.destroy(input);
-                        done();
-                    });
-                });
-
-                test('it should drop up', function (done) {
-                    var
-                        input = dom.byId('inp2'),
-                        controller = popup({
-                            input: input,
-                            auto: true,
-                            position: 'drop',
-                            closeDelay: closeDelay,
-                            create: function () {
-                                return dom('div', {className: 'red-box auto', html: bigListHtml});
-                            }
-                        });
-
-                    controller.on('open', function () {
-                        var ibox = dom.box(input),
-                            pbox = dom.box(controller.popup);
-
-                        expect(pbox.top < ibox.top).to.equal(true);
-                        expect(pbox.left <= ibox.left).to.equal(true);
-
-                        //done(); return;
-
-                        controller.close();
-                        //dom.destroy(input);
-                        done();
-                    });
-                });
-
-                test('it should drop down and scroll', function (done) {
-                    var
-                        input = dom.byId('inp2'),
-                        controller = popup({
-                            input: input,
-                            auto: true,
-                            position: 'drop',
-                            force: 'down',
-                            closeDelay: closeDelay,
-                            create: function () {
-                                return dom('div', {className: 'red-box auto', html: bigListHtml});
-                            }
-                        });
-
-                    controller.on('open', function () {
-                        var ibox = dom.box(input),
-                            pbox = dom.box(controller.popup);
-
-                        expect(pbox.top > ibox.top).to.equal(true);
-                        expect(pbox.left <= ibox.left).to.equal(true);
-
-                        controller.close();
-                        done();
-                    });
-                });
-
-                test('it should drop up and scroll (broken test)', function (done) {
-                    var
-                        input = dom.byId('inp1'),
-                        controller = popup({
-                            input: input,
-                            auto: true,
-                            position: 'drop',
-                            force: 'up',
-                            closeDelay: closeDelay,
-                            create: function () {
-                                return dom('div', {className: 'red-box auto', html: bigListHtml});
-                            }
-                        });
-
-                    controller.on('open', function () {
-                        var ibox = dom.box(input),
-                            pbox = dom.box(controller.popup);
-
-                        expect(pbox.top < ibox.top).to.equal(true);
-                        expect(pbox.left <= ibox.left).to.equal(true);
-
-                        controller.destroy();
-                        done();
-                    });
-                });
-            });
         });
 
         mocha.run();

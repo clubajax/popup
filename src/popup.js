@@ -12,8 +12,21 @@
         plugins[plugin.type][plugin.name] = plugin;
     }
 
-    // TODO: make a display plugin, for hide/show
-    // TODO: maybe make a click and hover plugin
+    addPlugin({
+        type: 'event',
+        name: 'default',
+        create: function (options, controller) {
+            return {
+                onShow: function () {
+                    //on.fire(controller, 'open');
+                },
+                onHide: noop,
+                destroy: noop
+            }
+        }
+    });
+
+    // TODO: make a hover plugin
     // TODO: make logging an option
 
     function popup (options) {
@@ -21,7 +34,7 @@
         // options:
         //  create: function that lazily creates popup (must return one node) TODO: could `node` be an option?
         //  input: button or input that opens popup
-        //  openOn: click, focus, enter, self TODO: hover
+        //  event: click, self,  TODO: hover
         //  closeOn: blur, clickoff
         //  position: auto, top, bottom, center, TL,TR,BL,BR, (etc) function
         //  rwd (position?)
@@ -39,7 +52,7 @@
         }
         if(plugins[type]){
             if(!plugins[type][name]){
-                console.warn('No position plugin found for `'+name+'`');
+                console.warn('No `'+type+'` plugin found for `'+name+'`');
             }else{
                 return plugins[type][name];
             }
@@ -53,19 +66,16 @@
 
     function createController (options) {
 
-        if(!options.openOn){
-            options.openOn = 'default';
-        }
+        options.event = options.event || 'default';
 
         var
             log = 0,
             node,
-            popup,
             handles = [],
             controller = dom('div'),
             posPlugin = getPlugin('position', options.position),
             aniPlugin = getPlugin('animate', options.animate),
-            evtPlugin = getPlugin('event', options.event || 'click'),
+            evtPlugin = getPlugin('event', options.event),
             disPlugin = getPlugin('display', options.display || 'default').create(options, controller, posPlugin, aniPlugin, evtPlugin);
 
         controller.on = function (eventName, selector, callback) {
@@ -81,40 +91,45 @@
 
         function destroy () {
             if(node){ dom.destroy(node); }
-            if(popup){ dom.destroy(popup); }
             if(disPlugin){
+                disPlugin.hide();
                 disPlugin.destroy();
             }
-            controller.popup = popup = null;
             controller.node = node = null;
-            log && console.log('destroy');
-        }
-
-        function handleOpen () {
-            if(options.openOn === 'default'){
-                // just open it
-                disPlugin.show();
-            }
-        }
-
-        controller.open = disPlugin.show;
-        controller.close = disPlugin.hide;
-        controller.toggle = noop;
-        controller.destroy = function () {
-            log && console.log('destroy');
-            disPlugin.hide();
-            destroy();
+            controller.popup = null;
             controller.open = noop;
             controller.close = noop;
             controller.toggle = noop;
-            handles.forEach(function (h) {
-                h.remove();
+            popup.util.tick(function () {
+                handles.forEach(function (h) {
+                    h.remove();
+                });
             });
-        };
+            log && console.log('destroy');
+        }
 
-        handleOpen();
+        function show () {
+            disPlugin.show();
+        }
 
-        window.controller = controller;
+        function hide () {
+            disPlugin.hide(function () {
+                if(options.destroyOnClose){
+                    destroy();
+                }
+            });
+        }
+
+        controller.open = show;
+        controller.close = hide;
+        controller.toggle = noop;
+        controller.destroy = destroy;
+
+        if(options.event === 'default'){
+            // just open it
+            disPlugin.show();
+        }
+
         return controller;
     }
 

@@ -46,15 +46,16 @@
         if(!options.auto){
             return false;
         }
-        var i, p, win = dom.box(window);
+        var p, win = dom.box(window);
         if(!posOrder || !posOrder.length){
             console.log('`auto` not available for center positions');
             return false;
         }
 
         p = posOrder.shift().split('');
+
         if(p[0] === 'B'){
-            if( box.i.top + box.i.height + box.gap + box.p.top + box.p.height > win.height ){
+            if( box.i.top + box.i.height + box.gap + box.p.height > win.height ){
                 return autoPlace(options, popup, input, box, posOrder);
             }
         }
@@ -83,7 +84,7 @@
 
         BL: function (options, popup, input, force) {
             var box = force || size(options, popup, input);
-            if (!force && autoPlace(options, popup, input, box, order.BL)) { return; }
+            if (!force && autoPlace(options, popup, input, box, order.BL.concat())) { return; }
             dom.style(popup, {
                 position: 'absolute',
                 left: box.i.left,
@@ -93,7 +94,7 @@
 
         BR: function (options, popup, input, force) {
             var box = force || size(options, popup, input);
-            if (!force && autoPlace(options, popup, input, box, order.BR)) { return; }
+            if (!force && autoPlace(options, popup, input, box, order.BR.concat())) { return; }
             dom.style(popup, {
                 position: 'absolute',
                 left: (box.i.left + box.i.width) - box.p.width,
@@ -132,7 +133,8 @@
             var
                 pinNode,
                 box = force || size(options, popup, input);
-            if (!force && autoPlace(options, popup, input, box, order.TL)) { return; }
+
+            if (!force && autoPlace(options, popup, input, box, order.TL.concat())) { return; }
 
             pinNode = pin(popup, box);
 
@@ -152,7 +154,8 @@
             var
                 pinNode,
                 box = force || size(options, popup, input);
-            if (!force && autoPlace(options, popup, input, box, order.TR)) { return; }
+
+            if (!force && autoPlace(options, popup, input, box, order.TR.concat())) { return; }
 
             pinNode = pin(popup, box);
 

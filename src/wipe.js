@@ -4,7 +4,6 @@
         type: 'animate',
         name: 'wipe',
         show: function (options, popup, input, callback) {
-
             var node = options.aniNode || popup;
             fx.height(node, {
                 startHeight: 0,

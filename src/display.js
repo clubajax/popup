@@ -22,6 +22,7 @@
                     hide: hide,
                     destroy: function () {
                         evtPlugin.destroy();
+                        log && console.log('display.destroy');
                         dom.destroy(node);
                     }
                 };
@@ -33,6 +34,7 @@
                     log && console.log('already showing');
                     return;
                 }
+                showing = true;
                 log && console.log('show');
                 if(!node){
                     node = options.create();
@@ -48,40 +50,39 @@
                 util.resetStyle(pop);
                 evtPlugin.onShow();
 
+                if(!aniPlugin){
+                    showing = true;
+                }
                 tick(function () {
                     if(posPlugin){
                         posPlugin.place(options, pop, options.input);
                     }
-
                     if(!aniPlugin){
                         pop.style.display = '';
-                        tick(function () {
-                            log && console.log('fire.open');
-                            showing = true;
-                            on.fire(controller, 'open');
-                        });
+                        log && console.log('display.fire.open');
+                        on.fire(controller, 'open');
                     }else{
                         animating = true;
                         aniPlugin.show(options, pop, options.input, function () {
                             log && console.log('done show');
                             animating = false;
-                            showing = true;
                             on.fire(controller, 'open');
                         });
                     }
                 });
             }
 
-            function hide () {
+            function hide (callback) {
+
                 function close () {
                     log && console.log('hide');
                     function finish () {
                         animating = false;
-                        showing = false;
                         log && console.log('finish');
                         if(options.destroyOnClose){
                             displayController.destroy();
-                        }else if(pop){ // may be destroyed
+                        }else
+                        if(pop){ // may be destroyed
                             pop.style.display = 'none';
                         }
                         if(posPlugin && posPlugin.onClose){
@@ -92,8 +93,15 @@
                         }
                         log && console.log('fire.close');
                         tick(function () {
+                            log && console.log('emit.close');
+                            // showing is set twice, to handle different click timings
+                            // (in case show sets true after hide sets false)
+                            showing = false;
                             on.fire(controller, 'close');
                         });
+                        if(callback){
+                            callback();
+                        }
                     }
 
                     if(!aniPlugin){
@@ -108,8 +116,10 @@
                     log && console.log('hide - not showing - animating', animating);
                     return;
                 }else if(showing === false){
-                    console.log('reverse animation');
+                    log && console.log('reverse animation');
                 }
+
+                showing = false;
 
                 if(node){
                     log && console.log('check.hide');

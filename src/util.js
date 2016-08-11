@@ -21,12 +21,17 @@
             // would this affect the tip/modal popups?
             // can it be used just for drop.js?
 
-            options.positionNode = dom('div', {class: POS_CLASS, style:{height: h}}, document.body);
-            options.aniNode = dom('div', {class: ANI_CLASS, style:{overflow: 'hidden', height: h}}, options.positionNode);
-            options.scrollNode = dom('div', {class: SCROLL_CLASS, style:{overflow: 'auto', height: h}}, options.aniNode);
+            var
+                height = typeof h === 'object' ? h.height : h,
+                width = typeof h === 'object' ? h.width : 'auto';
+
+            options.positionNode = dom('div', {class: POS_CLASS, style:{width:width, height: height}}, document.body);
+            options.aniNode = dom('div', {class: ANI_CLASS, style:{overflow: 'hidden', width:width, height: height}}, options.positionNode);
+            options.scrollNode = dom('div', {class: SCROLL_CLASS, style:{overflow: 'auto', width:width, height: height}}, options.aniNode);
             options.scrollNode.appendChild(pop);
             options.popup = pop;
             pop.style.position = '';
+            return options.positionNode;
         },
 
         unwrap: function (options, popup, input) {

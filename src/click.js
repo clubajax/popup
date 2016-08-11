@@ -11,20 +11,6 @@
                 clickoffHandle,
                 log = 0;
 
-            function handleClose () {
-                if(!options.popup){
-                    console.log('attempt to handleClose after destroy', options);
-                    return;
-                }
-                var closeOn = options.closeOn || options.openOn === 'click' ? 'clickoff' : false;
-                switch (closeOn) {
-                    case 'self': break;
-                    case 'clickoff':
-                        clickoff(true);
-                        break;
-                }
-            }
-
             function clickoff (resume) {
                 log && console.log('clickoff', resume);
                 if(resume){
@@ -96,7 +82,7 @@
             if(options.input){
                 //clickHandle = on(options.input, 'click', disPlugin.show);
                 clickHandle = on(options.input, 'click', function () {
-                    console.log('CLICK');
+                    log && console.log('click');
                     disPlugin.show();
                 });
             }else {
@@ -104,7 +90,7 @@
             }
             return {
                 onShow: function () {
-                    handleClose();
+                    clickoff(true);
                 },
                 onHide: function () {
                     clickoff(false);
