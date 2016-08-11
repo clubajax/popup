@@ -94,7 +94,11 @@
             }
 
             if(options.input){
-                clickHandle = on(options.input, 'click', disPlugin.show);
+                //clickHandle = on(options.input, 'click', disPlugin.show);
+                clickHandle = on(options.input, 'click', function () {
+                    console.log('CLICK');
+                    disPlugin.show();
+                });
             }else {
                 console.error('The click event must have an input');
             }

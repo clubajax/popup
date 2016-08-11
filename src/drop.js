@@ -15,9 +15,20 @@
         };
 
     function placeTop (options, pop, input, box, win, space) {
+
+
+
+
+        // FIXME - why is the height of the container wrong?
+
+
+
+
+
+
         log && console.log('placeTop');
 
-        util.wrap(options, space, pop);
+        util.wrap(options, Math.min(space, box.p.h), pop);
 
         dom.style(options.positionNode, {
             position: 'absolute',

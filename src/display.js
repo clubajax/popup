@@ -11,7 +11,7 @@
         create: function (options, controller, posPlugin, aniPlugin, evtPlugin) {
 
             var
-                log = 1,
+                log = 0,
                 animating,
                 pop,
                 node,
@@ -29,7 +29,10 @@
             evtPlugin = evtPlugin.create(options, displayController);
 
             function show () {
-                if(showing === true){ return; }
+                if(showing === true){
+                    log && console.log('already showing');
+                    return;
+                }
                 log && console.log('show');
                 if(!node){
                     node = options.create();
@@ -42,9 +45,8 @@
                     pop.appendChild(node);
                 }
 
-                 evtPlugin.onShow();
-
                 util.resetStyle(pop);
+                evtPlugin.onShow();
 
                 tick(function () {
                     if(posPlugin){
@@ -59,23 +61,12 @@
                             on.fire(controller, 'open');
                         });
                     }else{
-                        var canceled, h = on(document.body, 'click', function () {
-                            // checks if pop was canceled while opening
-                            // TODO: perhaps close immediately
-                            //console.log('CANCELED - animating:', animating);
-                            //canceled = 1;
-                        });
                         animating = true;
                         aniPlugin.show(options, pop, options.input, function () {
                             log && console.log('done show');
                             animating = false;
-                            h.remove();
                             showing = true;
-                            if(canceled){
-                                hide();
-                            }else{
-                                on.fire(controller, 'open');
-                            }
+                            on.fire(controller, 'open');
                         });
                     }
                 });
@@ -86,6 +77,7 @@
                     log && console.log('hide');
                     function finish () {
                         animating = false;
+                        showing = false;
                         log && console.log('finish');
                         if(options.destroyOnClose){
                             displayController.destroy();
@@ -100,7 +92,6 @@
                         }
                         log && console.log('fire.close');
                         tick(function () {
-                            showing = false;
                             on.fire(controller, 'close');
                         });
                     }

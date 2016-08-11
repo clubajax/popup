@@ -37,17 +37,6 @@
         .page-scroll{
             height: 1000px;
         }
-        #r{
-            border: 1px solid #999;
-            padding: 10px;
-            width: 100px;
-            height: 100px;
-            background: #ffa8a0;
-            transition: height 1000ms;
-        }
-        #r:hover{
-            height: 600px;
-        }
     </style>
 </head>
 <body>
@@ -55,7 +44,7 @@
     <button id="b1">drop down</button>
     <button id="b2">me too</button>
     <button id="b3">very long</button>
-    <div id="r"></div>
+
     <script>
         function createLongList(){
             var
@@ -119,18 +108,19 @@
             position: 'drop',
             openOn: 'click',
             animate: 'wipe',
-            speed: 2500,
+            speed: 1000,
             closeDelay: 0,
             create: function () {
                 var node = dom('div', {className: 'box red auto', html: scrollingList});
-                on(node, 'click', function () {
-                    setTimeout(function () {
-                        c3.close();
-                    }, 500);
-                });
+//                on(node, 'click', function () {
+//                    setTimeout(function () {
+//                        c3.close();
+//                    }, 500);
+//                });
                 return node;
             }
         });
+
     </script>
     <div class="page-scroll"></div>
 </body>
