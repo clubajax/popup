@@ -1,16 +1,15 @@
-(function () {
+(function (popup) {
 
     var
         log = 0,
-        popup = window.popup,
         util = popup.util,
         BOT_MIN = 200,
         plugin = {
             type: 'position',
             name: 'drop',
             place: place,
-            onClose: function (options, popup) {
-                util.unwrap(options, popup);
+            onClose: function (options, popNode) {
+                util.unwrap(options, popNode);
             }
         };
 
@@ -113,4 +112,4 @@
 
     popup.addPlugin(plugin);
 
-}());
+}(window.popup));

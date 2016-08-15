@@ -1,4 +1,4 @@
-(function(){
+(function(global){
 
     function noop () {}
 
@@ -62,7 +62,6 @@
 
     popup.plugins = plugins;
     popup.addPlugin = addPlugin;
-    window.popup = popup;
 
     function createController (options) {
 
@@ -133,6 +132,10 @@
         return controller;
     }
 
+    if(typeof global !== 'undefined') {
+        window.popup = popup;
+    }
 
+    return popup; // for AMD, otherwise, noop
 
-}());
+}(window));

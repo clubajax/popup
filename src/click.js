@@ -1,8 +1,6 @@
-(function () {
+(function (popup) {
 
-
-
-    window.popup.addPlugin({
+    popup.addPlugin({
         type: 'event',
         name: 'click',
         create: function (options, disPlugin) {
@@ -80,7 +78,6 @@
             }
 
             if(options.input){
-                //clickHandle = on(options.input, 'click', disPlugin.show);
                 clickHandle = on(options.input, 'click', function () {
                     log && console.log('click');
                     disPlugin.show();
@@ -103,4 +100,4 @@
         }
     });
 
-}());
+}(window.popup));

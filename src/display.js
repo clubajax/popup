@@ -1,11 +1,11 @@
-(function () {
+(function (popup) {
 
 
     function tick (callback) {
         window.requestAnimationFrame(callback);
     }
 
-    window.popup.addPlugin({
+    popup.addPlugin({
         type: 'display',
         name: 'default',
         create: function (options, controller, posPlugin, aniPlugin, evtPlugin) {
@@ -16,7 +16,7 @@
                 pop,
                 node,
                 showing,
-                util = window.popup.util,
+                util = popup.util,
                 displayController = {
                     show: show,
                     hide: hide,
@@ -48,7 +48,9 @@
                 }
 
                 util.resetStyle(pop);
-                evtPlugin.onShow();
+                if(evtPlugin.onShow) {
+                    evtPlugin.onShow();
+                }
 
                 if(!aniPlugin){
                     showing = true;
@@ -129,11 +131,13 @@
                         close();
                     }
                 }
-                evtPlugin.onHide();
+                if(evtPlugin.onHide) {
+                    evtPlugin.onHide();
+                }
             }
 
 
             return displayController;
         }
     });
-}());
+}(window.popup));

@@ -1,11 +1,10 @@
-(function () {
+(function (popup) {
 
     var
         order,
         place,
         plugins,
         PIN_CLASS = 'pin',
-        popup = window.popup,
         gap = 5;
 
     order = {
@@ -15,26 +14,26 @@
         TR: 'TR,TL,BR,BL'.split(',')
     };
 
-    function pin (popup, box){
+    function pin (popNode, box){
         var pin = dom('div', {class: PIN_CLASS, style:{height: box.p.height, width:box.p.width}}, document.body);
-        pin.appendChild(popup);
+        pin.appendChild(popNode);
         return pin
     }
 
-    function removePin (options, popup, input) {
-        if(popup && popup.parentNode && popup.parentNode.className === PIN_CLASS){
-            var parent = popup.parentNode;
-            parent.removeChild(popup);
+    function removePin (options, popNode, input) {
+        if(popNode && popNode.parentNode && popNode.parentNode.className === PIN_CLASS){
+            var parent = popNode.parentNode;
+            parent.removeChild(popNode);
             dom.destroy(parent);
         }
     }
 
-    function size (options, popup, input) {
+    function size (options, popNode, input) {
         var box = {
             gap: options.gap || gap
         };
-        if(popup){
-            box.p = dom.box(popup);
+        if(popNode){
+            box.p = dom.box(popNode);
         }
         if(input){
             box.i = dom.box(input);
@@ -42,7 +41,7 @@
         return box;
     }
 
-    function autoPlace (options, popup, input, box, posOrder ) {
+    function autoPlace (options, popNode, input, box, posOrder ) {
         if(!options.auto){
             return false;
         }
@@ -56,132 +55,132 @@
 
         if(p[0] === 'B'){
             if( box.i.top + box.i.height + box.gap + box.p.height > win.height ){
-                return autoPlace(options, popup, input, box, posOrder);
+                return autoPlace(options, popNode, input, box, posOrder);
             }
         }
         else{
             if( box.i.top + - box.gap - box.p.height < 0 ){
-                return autoPlace(options, popup, input, box, posOrder);
+                return autoPlace(options, popNode, input, box, posOrder);
             }
         }
 
         if(p[1] === 'R'){
             if( box.i.left - box.gap - box.p.width < 0 ){
-                return autoPlace(options, popup, input, box, posOrder);
+                return autoPlace(options, popNode, input, box, posOrder);
             }
         }
         else{
             if( box.i.left + box.i.width + box.gap + box.p.width > win.width ){
-                return autoPlace(options, popup, input, box, posOrder);
+                return autoPlace(options, popNode, input, box, posOrder);
             }
         }
 
-        place[p.join('')](options, popup, input, box);
+        place[p.join('')](options, popNode, input, box);
         return true;
     }
 
     place = {
 
-        BL: function (options, popup, input, force) {
-            var box = force || size(options, popup, input);
-            if (!force && autoPlace(options, popup, input, box, order.BL.concat())) { return; }
-            dom.style(popup, {
+        BL: function (options, popNode, input, force) {
+            var box = force || size(options, popNode, input);
+            if (!force && autoPlace(options, popNode, input, box, order.BL.concat())) { return; }
+            dom.style(popNode, {
                 position: 'absolute',
                 left: box.i.left,
                 top: box.i.top + box.i.height + box.gap
             });
         },
 
-        BR: function (options, popup, input, force) {
-            var box = force || size(options, popup, input);
-            if (!force && autoPlace(options, popup, input, box, order.BR.concat())) { return; }
-            dom.style(popup, {
+        BR: function (options, popNode, input, force) {
+            var box = force || size(options, popNode, input);
+            if (!force && autoPlace(options, popNode, input, box, order.BR.concat())) { return; }
+            dom.style(popNode, {
                 position: 'absolute',
                 left: (box.i.left + box.i.width) - box.p.width,
                 top: box.i.top + box.i.height + box.gap
             });
         },
 
-        BC: function (options, popup, input) {
-            var box = size(options, popup, input);
-            dom.style(popup, {
+        BC: function (options, popNode, input) {
+            var box = size(options, popNode, input);
+            dom.style(popNode, {
                 position: 'absolute',
                 left: (box.i.left + box.i.width / 2) - (box.p.width / 2),
                 top: box.i.top + box.i.height + box.gap
             });
         },
 
-        CL: function (options, popup, input) {
-            var box = size(options, popup, input);
-            dom.style(popup, {
+        CL: function (options, popNode, input) {
+            var box = size(options, popNode, input);
+            dom.style(popNode, {
                 position: 'absolute',
                 left: box.i.left - box.p.width - box.gap,
                 top: box.i.top + box.i.height / 2 - box.p.height / 2
             });
         },
 
-        CR: function (options, popup, input) {
-            var box = size(options, popup, input);
-            dom.style(popup, {
+        CR: function (options, popNode, input) {
+            var box = size(options, popNode, input);
+            dom.style(popNode, {
                 position: 'absolute',
                 left: box.i.left + box.i.width + box.gap,
                 top: box.i.top + box.i.height / 2 - box.p.height / 2
             });
         },
 
-        TL: function (options, popup, input, force) {
+        TL: function (options, popNode, input, force) {
             var
                 pinNode,
-                box = force || size(options, popup, input);
+                box = force || size(options, popNode, input);
 
-            if (!force && autoPlace(options, popup, input, box, order.TL.concat())) { return; }
+            if (!force && autoPlace(options, popNode, input, box, order.TL.concat())) { return; }
 
-            pinNode = pin(popup, box);
+            pinNode = pin(popNode, box);
 
             dom.style(pinNode, {
                 position: 'absolute',
                 left: box.i.left,
                 top: box.i.top - box.p.height - box.gap
             });
-            dom.style(popup, {
+            dom.style(popNode, {
                 position: 'absolute',
                 left: 0,
                 bottom: 0
             });
         },
 
-        TR: function (options, popup, input, force) {
+        TR: function (options, popNode, input, force) {
             var
                 pinNode,
-                box = force || size(options, popup, input);
+                box = force || size(options, popNode, input);
 
-            if (!force && autoPlace(options, popup, input, box, order.TR.concat())) { return; }
+            if (!force && autoPlace(options, popNode, input, box, order.TR.concat())) { return; }
 
-            pinNode = pin(popup, box);
+            pinNode = pin(popNode, box);
 
             dom.style(pinNode, {
                 position: 'absolute',
                 left: (box.i.left + box.i.width) - box.p.width,
                 top: box.i.top - box.p.height - box.gap
             });
-            dom.style(popup, {
+            dom.style(popNode, {
                 position: 'absolute',
                 left: 0,
                 bottom: 0
             });
         },
 
-        TC: function (options, popup, input) {
+        TC: function (options, popNode, input) {
             var
-                box = size(options, popup, input),
-                pinNode = pin(popup, box);
+                box = size(options, popNode, input),
+                pinNode = pin(popNode, box);
 
             dom.style(pinNode, {
                 position: 'absolute',
                 left: (box.i.left + box.i.width / 2) - box.p.width / 2,
                 top: box.i.top - box.p.height - box.gap
             });
-            dom.style(popup, {
+            dom.style(popNode, {
                 position: 'absolute',
                 left: 0,
                 bottom: 0
@@ -228,4 +227,4 @@
 
     plugins.forEach(popup.addPlugin);
 
-}());
+}(window.popup));
