@@ -1,4 +1,4 @@
-(function(global){
+(function(global, dom, on){ // fx is not UMD yet
 
     function noop () {}
 
@@ -138,4 +138,4 @@
 
     return popup; // for AMD, otherwise, noop
 
-}(window));
+}(window, window.dom, window.on));

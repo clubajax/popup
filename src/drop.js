@@ -1,4 +1,4 @@
-(function (popup) {
+(function (popup, dom, on, fx) {
 
     var
         log = 0,
@@ -112,4 +112,4 @@
 
     popup.addPlugin(plugin);
 
-}(window.popup));
+}(window.popup, window.dom, window.on, window.fx));

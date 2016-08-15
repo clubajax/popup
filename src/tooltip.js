@@ -1,4 +1,4 @@
-(function (popup) {
+(function (popup, dom, on, fx) {
 
     var
         order,
@@ -227,4 +227,4 @@
 
     plugins.forEach(popup.addPlugin);
 
-}(window.popup));
+}(window.popup, window.dom, window.on, window.fx));

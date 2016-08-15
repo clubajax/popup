@@ -1,4 +1,4 @@
-(function (popup) {
+(function (popup, dom, on, fx) {
 
 
     function tick (callback) {
@@ -140,4 +140,4 @@
             return displayController;
         }
     });
-}(window.popup));
+}(window.popup, window.dom, window.on, window.fx));

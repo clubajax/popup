@@ -1,4 +1,4 @@
-(function (popup) {
+(function (popup, dom, on, fx) {
 
     popup.addPlugin({
         type: 'event',
@@ -92,4 +92,4 @@
         }
     });
 
-}(window.popup));
+}(window.popup, window.dom, window.on, window.fx));
