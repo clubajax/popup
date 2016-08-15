@@ -1,4 +1,6 @@
-(function () {
+(function(popup, dom, on, fx) {
+
+    // util module
 
     var
         POS_CLASS = 'pin',
@@ -6,7 +8,7 @@
         SCROLL_CLASS = 'scroller',
         defaultGap = 5;
 
-    window.popup.util = {
+    popup.util = {
 
         wrap: function (options, h, pop) {
             // We need three nodes
@@ -137,4 +139,4 @@
         }
     };
 
-}());
+}(window.popup, window.dom, window.on, window.fx));

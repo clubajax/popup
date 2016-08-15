@@ -1,4 +1,6 @@
-(function (popup, dom, on, fx) {
+(function(popup, dom, on, fx) {
+
+    // click plugin
 
     popup.addPlugin({
         type: 'event',

@@ -1,30 +1,8 @@
-(function(global, dom, on){ // fx is not UMD yet
+(function(dom, on){ // fx is not UMD yet
 
     function noop () {}
 
-    var plugins = {};
 
-    function addPlugin (plugin) {
-        plugins[plugin.type] = plugins[plugin.type] || {};
-        if(plugins[plugin.type][plugin.name]){
-            throw Error('A popup plugin can only be installed once: ' + plugin.type + ' - ' + plugin.name);
-        }
-        plugins[plugin.type][plugin.name] = plugin;
-    }
-
-    addPlugin({
-        type: 'event',
-        name: 'default',
-        create: function (options, controller) {
-            return {
-                onShow: function () {
-                    //on.fire(controller, 'open');
-                },
-                onHide: noop,
-                destroy: noop
-            }
-        }
-    });
 
     // TODO: make a hover plugin
     // TODO: make logging an option
@@ -46,21 +24,45 @@
         return createController(options);
     }
 
+    popup.plugins = {};
+
     function getPlugin (type, name) {
         if(!name){
             return null;
         }
-        if(plugins[type]){
-            if(!plugins[type][name]){
+        if(popup.plugins[type]){
+            if(!popup.plugins[type][name]){
                 console.warn('No `'+type+'` plugin found for `'+name+'`');
             }else{
-                return plugins[type][name];
+                return popup.plugins[type][name];
             }
         }
         return null;
     }
 
-    popup.plugins = plugins;
+    function addPlugin (plugin) {
+        popup.plugins[plugin.type] = popup.plugins[plugin.type] || {};
+        if(popup.plugins[plugin.type][plugin.name]){
+            throw Error('A popup plugin can only be installed once: ' + plugin.type + ' - ' + plugin.name);
+        }
+        popup.plugins[plugin.type][plugin.name] = plugin;
+    }
+
+    addPlugin({
+        type: 'event',
+        name: 'default',
+        create: function (options, controller) {
+            return {
+                onShow: function () {
+                    //on.fire(controller, 'open');
+                },
+                onHide: noop,
+                destroy: noop
+            }
+        }
+    });
+
+
     popup.addPlugin = addPlugin;
 
     function createController (options) {
@@ -132,10 +134,17 @@
         return controller;
     }
 
-    if(typeof global !== 'undefined') {
+    if (typeof window !== 'undefined') {
+        // global
         window.popup = popup;
     }
+    else if (typeof module !== 'undefined') {
+        //CJS
+        module.exports = popup;
+    }
+    else {
+        // AMD
+        return popup;
+    }
 
-    return popup; // for AMD, otherwise, noop
-
-}(window, window.dom, window.on));
+}(window.dom, window.on));

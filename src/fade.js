@@ -1,5 +1,7 @@
 (function (popup, dom, on, fx) {
 
+    // fade plugin
+
     popup.addPlugin({
         type: 'animate',
         name: 'fade',

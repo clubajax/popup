@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+    <title>Demo popup</title>
+    <script src="../bower_components/dom/src/dom.js"></script>
+    <script src="../bower_components/on/src/key-poly.js"></script>
+    <script src="../bower_components/on/src/on.js"></script>
+    <script src="../bower_components/fx/src/fx.js"></script>
+    <script src="../dist/popup.js"></script>
+    <style>
+        .box{
+            border: 1px solid #999;
+            padding: 10px;
+            width: 100px;
+            height: 100px;
+        }
+        .red{
+            background: #ffa8a0;
+        }
+        .red-box{
+            border: 1px solid #999;
+            background: red;
+            padding: 10px;
+            width: 100px;
+            height: 100px;
+        }
+        .wide{
+            width: 300px;
+        }
+        .TR{
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+        .TL{
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+        .blue{
+            background: #b8c6ff;
+        }
+        .auto{
+            height: auto;
+        }
+        #inp1{
+            position: absolute;
+            top: 100px;
+            right: 200px;
+        }
+        #inp2{
+            position: absolute;
+            bottom: 100px;
+            right: 200px;
+        }
+        h1{
+            margin-bottom: 550px;
+        }
+        .page-scroll{
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Popup demo</h1>
+    <button id="b1">drop down</button>
+    <button id="b2">me too</button>
+    <button id="b3">very long</button>
+
+    <script>
+        function createLongList(){
+            var
+                i, ii,
+                code,
+                chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+                pre = 'ABCD'.split(''),
+                items = '';
+
+            for(i = 0; i < pre.length; i++){
+                for(ii = 0; ii < chars.length; ii++){
+                    code = pre[i] + chars[ii];
+                    items += '<li>'+code+'</li>';
+                }
+            }
+            return items;
+        }
+        var listHtml = '<div>list item A<br>list item B<br>list item C</div>';
+        var bigListHtml = '<div>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br>list item A<br>list item B<br>list item C<br></div>';
+        var scrollingList = '<ul>' + createLongList() + '</ul>';
+
+        var c1 = popup({
+            input: dom.byId('b1'),
+            auto: true,
+            position: 'drop',
+            //openOn: 'click',
+            event: 'hover',
+            //animate: 'wipe',
+            closeDelay: 0,
+            create: function () {
+                var node = dom('div', {className: 'box blue auto', html: bigListHtml});
+                on(node, 'click', function () {
+                    setTimeout(function () {
+                        c1.close();
+                    }, 500);
+                });
+                return node;
+            }
+        });
+
+        var c2 = popup({
+            input: dom.byId('b2'),
+            auto: true,
+            position: 'drop',
+            //openOn: 'click',
+            event: 'click',
+            animate: 'wipe',
+            speed: 500,
+            closeDelay: 0,
+            create: function () {
+                var node = dom('div', {className: 'box red auto', html: bigListHtml});
+                on(node, 'click', function () {
+                    setTimeout(function () {
+                        c2.close();
+                    }, 500);
+                });
+                return node;
+            }
+        });
+
+        var c3 = popup({
+            input: dom.byId('b3'),
+            auto: true,
+            position: 'drop',
+            //openOn: 'click',
+            event: 'click',
+            animate: 'wipe',
+            speed: 1000,
+            closeDelay: 0,
+            create: function () {
+                var node = dom('div', {className: 'box red auto', html: scrollingList});
+//                on(node, 'click', function () {
+//                    setTimeout(function () {
+//                        c3.close();
+//                    }, 500);
+//                });
+                return node;
+            }
+        });
+
+
+        function makeTR () {
+            var
+                input = dom('button', {class:'TR', html: 'TR'}, document.body),
+                controller = popup({
+                    input: input,
+                    auto: true,
+                    event: 'click',
+                    position: 'TR',
+                    closeDelay: 0,
+                    create: function () {
+                        //debugger
+                        console.log('OPEN TR');
+                        return dom('div', {className: 'red-box wide', html: listHtml});
+                    }
+                });
+        }
+        makeTR();
+
+        function makeTL () {
+            var
+                input = dom('button', {class:'TL', html: 'TL'}, document.body),
+                controller = popup({
+                    input: input,
+                    animate: 'wipe',
+                    event: 'click',
+                    speed: 200,
+                    auto: true,
+                    position: 'TL',
+                    create: function () {
+                        return dom('div', {className: 'red box one', html: listHtml});
+                    }
+                });
+        }
+        makeTL();
+    </script>
+    <div class="page-scroll"></div>
+</body>
+</html>

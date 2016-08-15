@@ -1,5 +1,7 @@
 (function (popup, dom, on, fx) {
 
+    // hover plugin
+
     popup.addPlugin({
         type: 'event',
         name: 'hover',

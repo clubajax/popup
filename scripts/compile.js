@@ -2,12 +2,20 @@ var
     files,
     fs = require('fs'),
     dir = './src',
-    ordered = ['popup.js', 'util.js'];
+    ordered = ['popup.js', 'util.js'],
+    prefix = fs.readFileSync('scripts/umd_prefix.txt'),
+    suffix = fs.readFileSync('scripts/umd_suffix.txt'),
+    final = prefix + '\n';
 
-function stripIIFE (file) {
-    file = file.substring(file.indexOf('(function('));
+function stripIIFE (file, index) {
+    var beg = file.search(/\(function\s*\(/),
+        end = file.search(/}\s*\(\s*window/);
+    if(beg === -1 || end === -1){
+        console.log('WARNING, potential parse problem with file', ordered[index]);
+    }
+    file = file.substring(0, end);
+    file = file.substring(beg);
     file = file.substring(file.indexOf('\n'));
-    file = file.substring(0, file.lastIndexOf('}(window'));
     return file;
 }
 fs.readdirSync(dir).forEach(function(fileName) {
@@ -20,9 +28,17 @@ files = ordered.map(function (fileName) {
     return fs.readFileSync(dir + '/' + fileName).toString();
 });
 
-files.forEach(function (file) {
-    var lines = file.split('\n');
+files.forEach(function (file, i) {
+    final += stripIIFE(file, i);
 });
+final += suffix;
 
-var test = fs.readFileSync(dir + '/fade.js').toString();
-console.log(stripIIFE(test));
+try {
+    fs.mkdirSync('dist');
+}catch(e){
+    // dir exists
+}
+fs.writeFileSync('dist/popup.js', final);
+
+//var test = fs.readFileSync(dir + '/fade.js').toString();
+//console.log(stripIIFE(test));

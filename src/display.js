@@ -1,5 +1,6 @@
 (function (popup, dom, on, fx) {
 
+    // display plugin
 
     function tick (callback) {
         window.requestAnimationFrame(callback);
@@ -140,4 +141,5 @@
             return displayController;
         }
     });
+
 }(window.popup, window.dom, window.on, window.fx));

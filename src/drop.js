@@ -1,5 +1,7 @@
 (function (popup, dom, on, fx) {
 
+    // drop plugin (dropdown selects)
+
     var
         log = 0,
         util = popup.util,

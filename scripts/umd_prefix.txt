@@ -1,0 +1,3 @@
+(function (define) {
+define(['dom', 'on', 'fx'], function (dom, on, fx) {
+console.log('LOAD POPUP!')

@@ -1,5 +1,7 @@
 (function (popup, dom, on, fx) {
 
+    // tooltip plugin
+
     var
         order,
         place,

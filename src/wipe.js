@@ -1,6 +1,6 @@
-(function () {
+(function(popup, dom, on, fx) {
 
-    window.popup.addPlugin({
+    popup.addPlugin({
         type: 'animate',
         name: 'wipe',
         show: function (options, popup, input, callback) {
@@ -22,4 +22,4 @@
         }
     });
 
-}());
+}(window.popup, window.dom, window.on, window.fx));
