@@ -100,9 +100,8 @@
             input: dom.byId('b1'),
             auto: true,
             position: 'drop',
-            //openOn: 'click',
             event: 'hover',
-            //animate: 'wipe',
+            animate: 'fade',
             closeDelay: 0,
             create: function () {
                 var node = dom('div', {className: 'box blue auto', html: bigListHtml});
@@ -119,7 +118,6 @@
             input: dom.byId('b2'),
             auto: true,
             position: 'drop',
-            //openOn: 'click',
             event: 'click',
             animate: 'wipe',
             speed: 500,
@@ -139,7 +137,6 @@
             input: dom.byId('b3'),
             auto: true,
             position: 'drop',
-            //openOn: 'click',
             event: 'click',
             animate: 'wipe',
             speed: 1000,
